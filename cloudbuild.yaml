@@ -4,11 +4,10 @@ options:
   env:
   - PROJECT_ID=$PROJECT_ID
 
-# Deploy public Grafana dashboards
+# Deploy public Grafana instance in AppEngine
 steps:
 - name: gcr.io/$PROJECT_ID/gcloud-jsonnet-cbif:1.18
   env:
   - PROJECT_IN=mlab-sandbox
   args:
-  - cd grafana-public
-  - gcloud app deploy --project $PROJECT_ID
+  - gcloud app deploy grafana-public/app.yaml --project $PROJECT_ID
