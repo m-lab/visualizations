@@ -1,0 +1,2110 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "xIXR1_LMz"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 28,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "# M-Lab Dashboard\n\ncountry: ${country}\n\ntimefilter: $__timeFilter\n\n\ncountry regex: ${country:regex}",
+        "mode": "markdown"
+      },
+      "pluginVersion": "10.1.5",
+      "title": "Panel Title",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#845ec2",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 4,
+        "x": 12,
+        "y": 0
+      },
+      "id": 29,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "US",
+          "project": "measurement-lab",
+          "rawQuery": true,
+          "rawSql": "WITH undefined as (\nSELECT\n  IF ((client.Geo.City = \"\" OR client.Geo.City IS NULL), \"undefined\", client.Geo.City) as city,\n  IF ((client.Geo.CountryName = \"\" OR client.Geo.CountryName IS NULL), \"undefined\", REPLACE(client.Geo.CountryName, \".\", \"\")) as country,\n  IF ((client.Network.ASName = \"\" OR client.Network.ASName IS NULL), \"undefined\", REPLACE(client.Network.ASName, \".\", \"\")) as clientASN\nFROM `measurement-lab.ndt_intermediate.extended_ndt7_downloads`\nWHERE\n  $__timeFilter(TIMESTAMP(date)) \n  AND REGEXP_CONTAINS(client.Geo.ContinentCode, \"${continent:regex}\")\n  AND IF(\"${country}\" = \"all\", TRUE, REGEXP_CONTAINS(client.Geo.CountryName, \"${country:regex}\"))\n  AND (filter.IsComplete AND filter.IsProduction AND NOT filter.IsError AND NOT filter.IsOAM AND NOT filter.IsPlatformAnomaly\n        AND NOT filter.IsSmall AND NOT filter.IsShort AND NOT filter.IsLong AND NOT filter._IsRFC1918)\n)\n\nSELECT\n  COUNT(*)\nFROM undefined\nWHERE --REGEXP_CONTAINS(city, \"${city:regex}\")\n  IF(\"${clientASN}\" = \"all\", TRUE, REGEXP_CONTAINS(clientASN, \"${clientASN:regex}\"))\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Total Tests",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#d65db1",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 4,
+        "x": 16,
+        "y": 0
+      },
+      "id": 30,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "US",
+          "project": "measurement-lab",
+          "rawQuery": true,
+          "rawSql": "WITH undefined as (\nSELECT\n  IF ((client.Geo.City = \"\" OR client.Geo.City IS NULL), \"undefined\", client.Geo.City) as city,\n  IF ((client.Geo.CountryName = \"\" OR client.Geo.CountryName IS NULL), \"undefined\", REPLACE(client.Geo.CountryName, \".\", \"\")) as country,\n  IF ((client.Network.ASName = \"\" OR client.Network.ASName IS NULL), \"undefined\", REPLACE(client.Network.ASName, \".\", \"\")) as clientASN,\n  a.MeanThroughputMbps as download\nFROM `measurement-lab.ndt_intermediate.extended_ndt7_downloads`\nWHERE\n  $__timeFilter(TIMESTAMP(date)) \n  AND REGEXP_CONTAINS(client.Geo.ContinentCode, \"${continent:regex}\")\n  AND IF(\"${country}\" = \"all\", TRUE, REGEXP_CONTAINS(client.Geo.CountryName, \"${country:regex}\"))\n  AND (filter.IsComplete AND filter.IsProduction AND NOT filter.IsError AND NOT filter.IsOAM AND NOT filter.IsPlatformAnomaly\n        AND NOT filter.IsSmall AND NOT filter.IsShort AND NOT filter.IsLong AND NOT filter._IsRFC1918)\n)\n\nSELECT\n  APPROX_QUANTILES(undefined.download, 100)[OFFSET(${percentile})]\nFROM undefined\nWHERE --REGEXP_CONTAINS(city, \"${city:regex}\")\n  IF(\"${clientASN}\"= \"all\", TRUE, REGEXP_CONTAINS(clientASN, \"${clientASN:regex}\"))",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Download (Mbps)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#d65db1",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 4,
+        "x": 20,
+        "y": 0
+      },
+      "id": 31,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "US",
+          "project": "measurement-lab",
+          "rawQuery": true,
+          "rawSql": "WITH undefined as (\nSELECT\n  IF ((client.Geo.City = \"\" OR client.Geo.City IS NULL), \"undefined\", client.Geo.City) as city,\n  IF ((client.Geo.CountryName = \"\" OR client.Geo.CountryName IS NULL), \"undefined\", REPLACE(client.Geo.CountryName, \".\", \"\")) as country,\n  IF ((client.Network.ASName = \"\" OR client.Network.ASName IS NULL), \"undefined\", REPLACE(client.Network.ASName, \".\", \"\")) as clientASN,\n  a.MeanThroughputMbps as upload\nFROM `measurement-lab.ndt_intermediate.extended_ndt7_uploads`\nWHERE\n  $__timeFilter(TIMESTAMP(date)) \n  AND REGEXP_CONTAINS(client.Geo.ContinentCode, \"${continent:regex}\")\n  AND IF(\"${country}\" = \"all\", TRUE, REGEXP_CONTAINS(client.Geo.CountryName, \"${country:regex}\"))\n  AND (filter.IsComplete AND filter.IsProduction AND NOT filter.IsError AND NOT filter.IsOAM AND NOT filter.IsPlatformAnomaly\n        AND NOT filter.IsSmall AND NOT filter.IsShort AND NOT filter.IsLong AND NOT filter._IsRFC1918)\n)\n\nSELECT\n  APPROX_QUANTILES(undefined.upload, 100)[OFFSET(${percentile})]\nFROM undefined\nWHERE --REGEXP_CONTAINS(city, \"${city:regex}\")\n  IF(\"${clientASN}\"= \"all\", TRUE, REGEXP_CONTAINS(clientASN, \"${clientASN:regex}\"))",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Upload (Mbps)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
+      "id": 32,
+      "options": {
+        "allData": {},
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [
+          {
+            "marker": {
+              "color": "#845EC2",
+              "size": 3
+            },
+            "type": "bar"
+          }
+        ],
+        "layout": {
+          "font": {
+            "color": "white"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              "2023-09-16 06:00",
+              "2023-10-17 06:00"
+            ],
+            "type": "date"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              0,
+              3840611.5789473685
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "// console.log(data);\n// locationService.partial({ 'var-example': 'test' }, true);\n  ",
+        "resScale": 2,
+        "script": "console.log(data)\nvar trace = {\n  x: data.series[0].fields[0].values,\n  y: data.series[0].fields[1].values\n};\n  \nreturn {data:[trace]};",
+        "yamlMode": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "location": "US",
+          "project": "measurement-lab",
+          "rawQuery": true,
+          "rawSql": "WITH undefined as (\nSELECT\n  IF ((client.Geo.City = \"\" OR client.Geo.City IS NULL), \"undefined\", client.Geo.City) as city,\n  IF ((client.Geo.CountryName = \"\" OR client.Geo.CountryName IS NULL), \"undefined\", REPLACE(client.Geo.CountryName, \".\", \"\")) as country,\n  IF ((client.Network.ASName = \"\" OR client.Network.ASName IS NULL), \"undefined\", REPLACE(client.Network.ASName, \".\", \"\")) as clientASN,\n  a.TestTime as time\nFROM `measurement-lab.ndt_intermediate.extended_ndt7_downloads`\nWHERE\n  $__timeFilter(TIMESTAMP(date)) \n  AND REGEXP_CONTAINS(client.Geo.ContinentCode, \"${continent:regex}\")\n  AND IF(\"${country}\" = \"all\", TRUE, REGEXP_CONTAINS(client.Geo.CountryName, \"${country:regex}\"))\n  AND (filter.IsComplete AND filter.IsProduction AND NOT filter.IsError AND NOT filter.IsOAM AND NOT filter.IsPlatformAnomaly\n        AND NOT filter.IsSmall AND NOT filter.IsShort AND NOT filter.IsLong AND NOT filter._IsRFC1918)\n)\n\nSELECT\n  TIMESTAMP_TRUNC(undefined.time, ${time_segment}) as time,\n  COUNT(*) as value\nFROM undefined\nWHERE --REGEXP_CONTAINS(city, \"${city:regex}\")\n  IF(\"${clientASN}\"= \"all\", TRUE, REGEXP_CONTAINS(undefined.clientASN, \"${clientASN:regex}\"))\nGROUP by time\nORDER BY time",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "NDT download count",
+      "type": "nline-plotlyjs-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 8,
+        "y": 8
+      },
+      "id": 33,
+      "options": {
+        "allData": {},
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [
+          {
+            "line": {
+              "color": "#D65DB1",
+              "width": 2
+            },
+            "marker": {
+              "size": 3
+            },
+            "mode": "lines",
+            "type": "scatter"
+          }
+        ],
+        "layout": {
+          "font": {
+            "color": "white"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              "2023-09-16 18:00",
+              "2023-10-16 18:00"
+            ],
+            "type": "date"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              599.1151878928274,
+              7186.242878357272
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "// console.log(data);\n// locationService.partial({ 'var-example': 'test' }, true);\n  ",
+        "resScale": 2,
+        "script": "var trace = {\n  x: data.series[0].fields[0].values,\n  y: data.series[0].fields[1].values\n};\n  \nreturn {data:[trace]};",
+        "yamlMode": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "location": "US",
+          "project": "measurement-lab",
+          "rawQuery": true,
+          "rawSql": "WITH undefined as (\nSELECT\n  IF ((client.Geo.City = \"\" OR client.Geo.City IS NULL), \"undefined\", client.Geo.City) as city,\n  IF ((client.Geo.CountryName = \"\" OR client.Geo.CountryName IS NULL), \"undefined\", REPLACE(client.Geo.CountryName, \".\", \"\")) as country,\n  IF ((client.Network.ASName = \"\" OR client.Network.ASName IS NULL), \"undefined\", REPLACE(client.Network.ASName, \".\", \"\")) as clientASN,\n  a.TestTime as time,\n  a.MeanThroughputMbps as download\nFROM `measurement-lab.ndt_intermediate.extended_ndt7_downloads`\nWHERE\n  $__timeFilter(TIMESTAMP(date)) \n  AND REGEXP_CONTAINS(client.Geo.ContinentCode, \"${continent:regex}\")\n  AND IF(\"${country}\" = \"all\", TRUE, REGEXP_CONTAINS(client.Geo.CountryName, \"${country:regex}\"))\n  AND (filter.IsComplete AND filter.IsProduction AND NOT filter.IsError AND NOT filter.IsOAM AND NOT filter.IsPlatformAnomaly\n        AND NOT filter.IsSmall AND NOT filter.IsShort AND NOT filter.IsLong AND NOT filter._IsRFC1918)\n)\n\nSELECT\n  TIMESTAMP_TRUNC(undefined.time,  ${time_segment}) as time,\n  APPROX_QUANTILES(undefined.download, 100)[OFFSET(${percentile})]\nFROM undefined\nWHERE --REGEXP_CONTAINS(city, \"${city:regex}\")\n  IF(\"${clientASN}\"= \"all\", TRUE, REGEXP_CONTAINS(undefined.clientASN, \"${clientASN:regex}\"))\nGROUP by time\nORDER BY time ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Download (Mbps)",
+      "type": "nline-plotlyjs-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 16,
+        "y": 8
+      },
+      "id": 34,
+      "options": {
+        "allData": {},
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [
+          {
+            "line": {
+              "color": "#D65DB1",
+              "width": 2
+            },
+            "marker": {
+              "size": 3
+            },
+            "mode": "lines",
+            "type": "scatter"
+          }
+        ],
+        "layout": {
+          "font": {
+            "color": "white"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              "2023-09-16 18:00",
+              "2023-10-16 18:00"
+            ],
+            "type": "date"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              315.4029504139651,
+              7038.195753831255
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "// console.log(data);\n// locationService.partial({ 'var-example': 'test' }, true);\n  ",
+        "resScale": 2,
+        "script": "console.log(data)\nvar trace = {\n  x: data.series[0].fields[0].values,\n  y: data.series[0].fields[1].values\n};\n  \nreturn {data:[trace]};",
+        "yamlMode": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "location": "US",
+          "project": "measurement-lab",
+          "rawQuery": true,
+          "rawSql": "WITH undefined as (\nSELECT\n  IF ((client.Geo.City = \"\" OR client.Geo.City IS NULL), \"undefined\", client.Geo.City) as city,\n  IF ((client.Geo.CountryName = \"\" OR client.Geo.CountryName IS NULL), \"undefined\", REPLACE(client.Geo.CountryName, \".\", \"\")) as country,\n  IF ((client.Network.ASName = \"\" OR client.Network.ASName IS NULL), \"undefined\", REPLACE(client.Network.ASName, \".\", \"\")) as clientASN,\n  a.TestTime as time,\n  a.MeanThroughputMbps as upload\nFROM `measurement-lab.ndt_intermediate.extended_ndt7_uploads`\nWHERE\n  $__timeFilter(TIMESTAMP(date)) \n  AND REGEXP_CONTAINS(client.Geo.ContinentCode, \"${continent:regex}\")\n  AND IF(\"${country}\" = \"all\", TRUE, REGEXP_CONTAINS(client.Geo.CountryName, \"${country:regex}\"))\n  AND (filter.IsComplete AND filter.IsProduction AND NOT filter.IsError AND NOT filter.IsOAM AND NOT filter.IsPlatformAnomaly\n        AND NOT filter.IsSmall AND NOT filter.IsShort AND NOT filter.IsLong AND NOT filter._IsRFC1918)\n)\n\nSELECT\n  TIMESTAMP_TRUNC(undefined.time,  ${time_segment}) as time,\n  APPROX_QUANTILES(undefined.upload, 100)[OFFSET(${percentile})]\nFROM undefined\nWHERE --REGEXP_CONTAINS(city, \"${city:regex}\")\n  IF(\"${clientASN}\"= \"all\", TRUE, REGEXP_CONTAINS(undefined.clientASN, \"${clientASN:regex}\"))\nGROUP by time\nORDER BY time ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Upload (Mbps)",
+      "type": "nline-plotlyjs-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 0,
+        "y": 21
+      },
+      "id": 35,
+      "options": {
+        "allData": {},
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [
+          {
+            "line": {
+              "color": "#D65DB1",
+              "width": 2
+            },
+            "marker": {
+              "size": 3
+            },
+            "mode": "lines",
+            "type": "scatter"
+          }
+        ],
+        "layout": {
+          "font": {
+            "color": "white",
+            "family": "Inter, Helvetica, Arial, sans-serif"
+          },
+          "hoverlabel": {
+            "bgcolor": "white"
+          },
+          "legend": {
+            "orientation": "h"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "automargin": true,
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              "2023-09-16 18:00",
+              "2023-10-16 18:00"
+            ],
+            "type": "date"
+          },
+          "yaxis": {
+            "automargin": true,
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -17963.388888888887,
+              341344.3888888889
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "// console.log(data);\n// locationService.partial({ 'var-example': 'test' }, true);\n  ",
+        "resScale": 2,
+        "script": "var clientASNs = {};\n\nvar x = data.series[0].fields[0].values;\n\nvar y = data.series[0].fields[2].values;\nvar names = data.series[0].fields[1].values;\n\nnames.forEach(clientASN => {\n  clientASNs[clientASN] = {\n    x: [],\n    y: [],\n    name: clientASN,\n    line: {\n      width: 1\n    }\n  }\n}); \n\nx.forEach((xv, i) => {\n  clientASNs[names[i]].x.push(x[i]);\n  clientASNs[names[i]].y.push(y[i]);\n})\n\n\nvar data = [];\nObject.keys(clientASNs).sort().forEach(clientASN => {\n  data.push(clientASNs[clientASN]);\n});\n\nvar trace = {\n  x: x, \n  y: y, \n  name: names \n};\n\nconsole.log(data)\n//console.log(trace)\n\nreturn {data:data};",
+        "yamlMode": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "US",
+          "project": "measurement-lab",
+          "rawQuery": true,
+          "rawSql": "WITH clientASNs as (\nSELECT   \n  IF (( client.Network.ASName = \"\" OR client.Network.ASName IS NULL), \"undefined\", REPLACE(client.Network.ASName, \".\", \"\")) as clientASN, \n  COUNT(*) as count\nFROM `measurement-lab.ndt.ndt7`\nWHERE\n  $__timeFilter(TIMESTAMP(date))\n  AND IF(\"${country}\" = \"all\", TRUE, REGEXP_CONTAINS(client.Geo.CountryName, \"${country:regex}\"))\nGROUP BY clientASN\nORDER by count DESC\nLIMIT 5\n),\n\nundefined as (\nSELECT\n  IF ((client.Geo.City = \"\" OR client.Geo.City IS NULL), \"undefined\", client.Geo.City) as city,\n  IF ((client.Geo.CountryName = \"\" OR client.Geo.CountryName IS NULL), \"undefined\", REPLACE(client.Geo.CountryName, \".\", \"\")) as country,\n  IF (( client.Network.ASName = \"\" OR client.Network.ASName IS NULL), \"undefined\", REPLACE(client.Network.ASName, \".\", \"\")) as clientASN,\n  a.TestTime as time,\n  a.MeanThroughputMbps as download\nFROM `measurement-lab.ndt_intermediate.extended_ndt7_downloads` \nWHERE\n  $__timeFilter(TIMESTAMP(date)) \n  AND REGEXP_CONTAINS(client.Geo.ContinentCode, \"${continent:regex}\")\n  AND IF(\"${country}\" = \"all\", TRUE, REGEXP_CONTAINS(client.Geo.CountryName, \"${country:regex}\"))\n  AND (filter.IsComplete AND filter.IsProduction AND NOT filter.IsError AND NOT filter.IsOAM AND NOT filter.IsPlatformAnomaly\n        AND NOT filter.IsSmall AND NOT filter.IsShort AND NOT filter.IsLong AND NOT filter._IsRFC1918)\n)\n\nSELECT\n  TIMESTAMP_TRUNC(undefined.time,  ${time_segment}) as time,\n  clientASNs.clientASN as clientASN,\n  COUNT(*) as count\nFROM clientASNs INNER JOIN undefined on clientASNs.clientASN = undefined.clientASN \nWHERE --REGEXP_CONTAINS(city, \"${city:regex}\")\n  IF(\"${clientASN}\"= \"all\", TRUE, REGEXP_CONTAINS(undefined.clientASN, \"${clientASN:regex}\"))\nGROUP by time, clientASN\nORDER BY time \n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Test count per Top 5 ASN ",
+      "type": "nline-plotlyjs-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 8,
+        "y": 21
+      },
+      "id": 36,
+      "options": {
+        "allData": {},
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [
+          {
+            "line": {
+              "color": "#D65DB1",
+              "width": 2
+            },
+            "marker": {
+              "size": 3
+            },
+            "mode": "lines",
+            "type": "scatter"
+          }
+        ],
+        "layout": {
+          "font": {
+            "color": "white"
+          },
+          "legend": {
+            "orientation": "h"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              "2023-09-16 18:00",
+              "2023-10-16 18:00"
+            ],
+            "type": "date"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -232.6545836765906,
+              5392.201169191129
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "// console.log(data);\n// locationService.partial({ 'var-example': 'test' }, true);\n  ",
+        "resScale": 2,
+        "script": "var clientASNs = {};\n\nvar x = data.series[0].fields[0].values;\n\nvar y = data.series[0].fields[2].values;\nvar names = data.series[0].fields[1].values;\n\nnames.forEach(clientASN => {\n  clientASNs[clientASN] = {\n    x: [],\n    y: [],\n    name: clientASN,\n    line: {\n      width: 1\n    }\n  }\n}); \n\nx.forEach((xv, i) => {\n  clientASNs[names[i]].x.push(x[i]);\n  clientASNs[names[i]].y.push(y[i]);\n})\n\nvar data = [];\nObject.keys(clientASNs).sort().forEach(clientASN => {\n  data.push(clientASNs[clientASN]);\n});\n\nvar trace = {\n  x: x, \n  y: y, \n  name: names \n};\n\n//console.log(trace)\n\nreturn {data:data};",
+        "yamlMode": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "US",
+          "project": "measurement-lab",
+          "rawQuery": true,
+          "rawSql": "WITH clientASNs as (\nSELECT   \n  IF (( client.Network.ASName = \"\" OR client.Network.ASName IS NULL), \"undefined\", REPLACE(client.Network.ASName, \".\", \"\")) as clientASN, \n  COUNT(*) as count\nFROM `measurement-lab.ndt.ndt7`\nWHERE \n  $__timeFilter(TIMESTAMP(date)) \n  AND IF(\"${country}\" = \"all\", TRUE, REGEXP_CONTAINS(client.Geo.CountryName, \"${country:regex}\"))\nGROUP BY clientASN\nORDER by count DESC\nLIMIT 5\n),\n\nundefined as (\nSELECT\n  IF ((client.Geo.City = \"\" OR client.Geo.City IS NULL), \"undefined\", client.Geo.City) as city,\n  IF ((client.Geo.CountryName = \"\" OR client.Geo.CountryName IS NULL), \"undefined\", REPLACE(client.Geo.CountryName, \".\", \"\")) as country,\n  IF (( client.Network.ASName = \"\" OR client.Network.ASName IS NULL), \"undefined\", REPLACE(client.Network.ASName, \".\", \"\")) as clientASN,\n  a.TestTime as time,\n  a.MeanThroughputMbps as download\nFROM `measurement-lab.ndt_intermediate.extended_ndt7_downloads` \nWHERE\n  $__timeFilter(TIMESTAMP(date)) \n  AND REGEXP_CONTAINS(client.Geo.ContinentCode, \"${continent:regex}\")\n  AND IF(\"${country}\" = \"all\", TRUE, REGEXP_CONTAINS(client.Geo.CountryName, \"${country:regex}\"))\n  AND (filter.IsComplete AND filter.IsProduction AND NOT filter.IsError AND NOT filter.IsOAM AND NOT filter.IsPlatformAnomaly\n        AND NOT filter.IsSmall AND NOT filter.IsShort AND NOT filter.IsLong AND NOT filter._IsRFC1918)\n)\n\nSELECT\n  TIMESTAMP_TRUNC(undefined.time,  ${time_segment}) as time,\n  clientASNs.clientASN as clientASN,\n  APPROX_QUANTILES(undefined.download, 100)[OFFSET(${percentile})]\nFROM clientASNs INNER JOIN undefined on clientASNs.clientASN = undefined.clientASN \nWHERE --REGEXP_CONTAINS(city, \"${city:regex}\")\n  IF(\"${clientASN}\"= \"all\", TRUE, REGEXP_CONTAINS(undefined.clientASN, \"${clientASN:regex}\"))\nGROUP by time, clientASN\nORDER BY time \n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Download per Top 5 ASN (Mbps)",
+      "type": "nline-plotlyjs-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 16,
+        "y": 21
+      },
+      "id": 37,
+      "options": {
+        "allData": {},
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [
+          {
+            "line": {
+              "color": "#D65DB1",
+              "width": 2
+            },
+            "marker": {
+              "size": 3
+            },
+            "mode": "lines",
+            "type": "scatter"
+          }
+        ],
+        "layout": {
+          "font": {
+            "color": "white"
+          },
+          "legend": {
+            "orientation": "h"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              "2023-09-16 18:00",
+              "2023-10-16 18:00"
+            ],
+            "type": "date"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -232.6545836765906,
+              5392.201169191129
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "// console.log(data);\n// locationService.partial({ 'var-example': 'test' }, true);\n  ",
+        "resScale": 2,
+        "script": "var clientASNs = {};\n\nvar x = data.series[0].fields[0].values;\n\nvar y = data.series[0].fields[2].values;\nvar names = data.series[0].fields[1].values;\n\nnames.forEach(clientASN => {\n  clientASNs[clientASN] = {\n    x: [],\n    y: [],\n    name: clientASN,\n    line: {\n      width: 1\n    }\n  }\n}); \n\nx.forEach((xv, i) => {\n  clientASNs[names[i]].x.push(x[i]);\n  clientASNs[names[i]].y.push(y[i]);\n})\n\nvar data = [];\nObject.keys(clientASNs).sort().forEach(clientASN => {\n  data.push(clientASNs[clientASN]);\n});\n\nvar trace = {\n  x: x, \n  y: y, \n  name: names \n};\n\n//console.log(trace)\n\nreturn {data:data};",
+        "yamlMode": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "US",
+          "project": "measurement-lab",
+          "rawQuery": true,
+          "rawSql": "WITH clientASNs as (\nSELECT   \n  IF (( client.Network.ASName = \"\" OR client.Network.ASName IS NULL), \"undefined\", REPLACE(client.Network.ASName, \".\", \"\")) as clientASN, \n  COUNT(*) as count\nFROM `measurement-lab.ndt.ndt7`\nWHERE \n  $__timeFilter(TIMESTAMP(date)) \n  AND IF(\"${country}\" = \"all\", TRUE, REGEXP_CONTAINS(client.Geo.CountryName, \"${country:regex}\"))\nGROUP BY clientASN\nORDER by count DESC\nLIMIT 5\n),\n\nundefined as (\nSELECT\n  IF ((client.Geo.City = \"\" OR client.Geo.City IS NULL), \"undefined\", client.Geo.City) as city,\n  IF ((client.Geo.CountryName = \"\" OR client.Geo.CountryName IS NULL), \"undefined\", REPLACE(client.Geo.CountryName, \".\", \"\")) as country,\n  IF (( client.Network.ASName = \"\" OR client.Network.ASName IS NULL), \"undefined\", REPLACE(client.Network.ASName, \".\", \"\")) as clientASN,\n  a.TestTime as time,\n  a.MeanThroughputMbps as download\nFROM `measurement-lab.ndt_intermediate.extended_ndt7_downloads` \nWHERE\n  $__timeFilter(TIMESTAMP(date)) \n  AND REGEXP_CONTAINS(client.Geo.ContinentCode, \"${continent:regex}\")\n  AND IF(\"${country}\" = \"all\", TRUE, REGEXP_CONTAINS(client.Geo.CountryName, \"${country:regex}\"))\n  AND (filter.IsComplete AND filter.IsProduction AND NOT filter.IsError AND NOT filter.IsOAM AND NOT filter.IsPlatformAnomaly\n        AND NOT filter.IsSmall AND NOT filter.IsShort AND NOT filter.IsLong AND NOT filter._IsRFC1918)\n)\n\nSELECT\n  TIMESTAMP_TRUNC(undefined.time,  ${time_segment}) as time,\n  clientASNs.clientASN as clientASN,\n  APPROX_QUANTILES(undefined.download, 100)[OFFSET(${percentile})]\nFROM clientASNs INNER JOIN undefined on clientASNs.clientASN = undefined.clientASN \nWHERE --REGEXP_CONTAINS(city, \"${city:regex}\")\n  IF(\"${clientASN}\"= \"all\", TRUE, REGEXP_CONTAINS(undefined.clientASN, \"${clientASN:regex}\"))\nGROUP by time, clientASN\nORDER BY time \n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Download per Top 5 ASN (Mbps)",
+      "type": "nline-plotlyjs-panel"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": "",
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Continent",
+        "multi": true,
+        "name": "continent",
+        "options": [],
+        "query": {
+          "0": "S",
+          "1": "E",
+          "2": "L",
+          "3": "E",
+          "4": "C",
+          "5": "T",
+          "6": " ",
+          "7": "C",
+          "8": "o",
+          "9": "n",
+          "10": "t",
+          "11": "i",
+          "12": "n",
+          "13": "e",
+          "14": "n",
+          "15": "t",
+          "16": "C",
+          "17": "o",
+          "18": "d",
+          "19": "e",
+          "20": " ",
+          "21": "\n",
+          "22": "F",
+          "23": "R",
+          "24": "O",
+          "25": "M",
+          "26": " ",
+          "27": "(",
+          "28": "\n",
+          "29": "S",
+          "30": "E",
+          "31": "L",
+          "32": "E",
+          "33": "C",
+          "34": "T",
+          "35": " ",
+          "36": "c",
+          "37": "l",
+          "38": "i",
+          "39": "e",
+          "40": "n",
+          "41": "t",
+          "42": ".",
+          "43": "G",
+          "44": "e",
+          "45": "o",
+          "46": ".",
+          "47": "C",
+          "48": "o",
+          "49": "n",
+          "50": "t",
+          "51": "i",
+          "52": "n",
+          "53": "e",
+          "54": "n",
+          "55": "t",
+          "56": "C",
+          "57": "o",
+          "58": "d",
+          "59": "e",
+          "60": "\n",
+          "61": "F",
+          "62": "R",
+          "63": "O",
+          "64": "M",
+          "65": " ",
+          "66": "`",
+          "67": "m",
+          "68": "e",
+          "69": "a",
+          "70": "s",
+          "71": "u",
+          "72": "r",
+          "73": "e",
+          "74": "m",
+          "75": "e",
+          "76": "n",
+          "77": "t",
+          "78": "-",
+          "79": "l",
+          "80": "a",
+          "81": "b",
+          "82": ".",
+          "83": "n",
+          "84": "d",
+          "85": "t",
+          "86": ".",
+          "87": "n",
+          "88": "d",
+          "89": "t",
+          "90": "7",
+          "91": "`",
+          "92": "\n",
+          "93": "W",
+          "94": "H",
+          "95": "E",
+          "96": "R",
+          "97": "E",
+          "98": " ",
+          "99": "d",
+          "100": "a",
+          "101": "t",
+          "102": "e",
+          "103": " ",
+          "104": "=",
+          "105": " ",
+          "106": "D",
+          "107": "A",
+          "108": "T",
+          "109": "E",
+          "110": "_",
+          "111": "S",
+          "112": "U",
+          "113": "B",
+          "114": "(",
+          "115": "C",
+          "116": "U",
+          "117": "R",
+          "118": "R",
+          "119": "E",
+          "120": "N",
+          "121": "T",
+          "122": "_",
+          "123": "D",
+          "124": "A",
+          "125": "T",
+          "126": "E",
+          "127": "(",
+          "128": ")",
+          "129": ",",
+          "130": " ",
+          "131": "I",
+          "132": "N",
+          "133": "T",
+          "134": "E",
+          "135": "R",
+          "136": "V",
+          "137": "A",
+          "138": "L",
+          "139": " ",
+          "140": "2",
+          "141": " ",
+          "142": "D",
+          "143": "A",
+          "144": "Y",
+          "145": ")",
+          "146": "\n",
+          "147": "A",
+          "148": "N",
+          "149": "D",
+          "150": " ",
+          "151": "c",
+          "152": "l",
+          "153": "i",
+          "154": "e",
+          "155": "n",
+          "156": "t",
+          "157": ".",
+          "158": "G",
+          "159": "e",
+          "160": "o",
+          "161": ".",
+          "162": "C",
+          "163": "o",
+          "164": "n",
+          "165": "t",
+          "166": "i",
+          "167": "n",
+          "168": "e",
+          "169": "n",
+          "170": "t",
+          "171": "C",
+          "172": "o",
+          "173": "d",
+          "174": "e",
+          "175": " ",
+          "176": "I",
+          "177": "S",
+          "178": " ",
+          "179": "N",
+          "180": "O",
+          "181": "T",
+          "182": " ",
+          "183": "N",
+          "184": "U",
+          "185": "L",
+          "186": "L",
+          "187": "\n",
+          "188": "G",
+          "189": "R",
+          "190": "O",
+          "191": "U",
+          "192": "P",
+          "193": " ",
+          "194": "B",
+          "195": "Y",
+          "196": " ",
+          "197": "C",
+          "198": "o",
+          "199": "n",
+          "200": "t",
+          "201": "i",
+          "202": "n",
+          "203": "e",
+          "204": "n",
+          "205": "t",
+          "206": "C",
+          "207": "o",
+          "208": "d",
+          "209": "e",
+          "210": "\n",
+          "211": ")",
+          "editorMode": "code",
+          "format": 1,
+          "location": "US",
+          "project": "measurement-lab",
+          "rawQuery": true,
+          "rawSql": "SELECT ContinentCode \nFROM (\nSELECT client.Geo.ContinentCode\nFROM `measurement-lab.ndt.ndt7`\nWHERE date = DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)\nAND client.Geo.ContinentCode IS NOT NULL\nGROUP BY ContinentCode\n)",
+          "refId": "tempvar",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": "all",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Country",
+        "multi": true,
+        "name": "country",
+        "options": [],
+        "query": {
+          "0": "S",
+          "1": "E",
+          "2": "L",
+          "3": "E",
+          "4": "C",
+          "5": "T",
+          "6": " ",
+          "7": "C",
+          "8": "o",
+          "9": "u",
+          "10": "n",
+          "11": "t",
+          "12": "r",
+          "13": "y",
+          "14": "N",
+          "15": "a",
+          "16": "m",
+          "17": "e",
+          "18": "\n",
+          "19": "F",
+          "20": "R",
+          "21": "O",
+          "22": "M",
+          "23": " ",
+          "24": "(",
+          "25": "\n",
+          "26": "S",
+          "27": "E",
+          "28": "L",
+          "29": "E",
+          "30": "C",
+          "31": "T",
+          "32": " ",
+          "33": " ",
+          "34": " ",
+          "35": "\n",
+          "36": "I",
+          "37": "F",
+          "38": " ",
+          "39": "(",
+          "40": "(",
+          "41": "c",
+          "42": "l",
+          "43": "i",
+          "44": "e",
+          "45": "n",
+          "46": "t",
+          "47": ".",
+          "48": "G",
+          "49": "e",
+          "50": "o",
+          "51": ".",
+          "52": "C",
+          "53": "o",
+          "54": "u",
+          "55": "n",
+          "56": "t",
+          "57": "r",
+          "58": "y",
+          "59": "N",
+          "60": "a",
+          "61": "m",
+          "62": "e",
+          "63": " ",
+          "64": "=",
+          "65": " ",
+          "66": "\"",
+          "67": "\"",
+          "68": " ",
+          "69": "O",
+          "70": "R",
+          "71": " ",
+          "72": "c",
+          "73": "l",
+          "74": "i",
+          "75": "e",
+          "76": "n",
+          "77": "t",
+          "78": ".",
+          "79": "G",
+          "80": "e",
+          "81": "o",
+          "82": ".",
+          "83": "C",
+          "84": "o",
+          "85": "u",
+          "86": "n",
+          "87": "t",
+          "88": "r",
+          "89": "y",
+          "90": "N",
+          "91": "a",
+          "92": "m",
+          "93": "e",
+          "94": " ",
+          "95": "I",
+          "96": "S",
+          "97": " ",
+          "98": "N",
+          "99": "U",
+          "100": "L",
+          "101": "L",
+          "102": ")",
+          "103": ",",
+          "104": " ",
+          "105": "\"",
+          "106": "u",
+          "107": "n",
+          "108": "d",
+          "109": "e",
+          "110": "f",
+          "111": "i",
+          "112": "n",
+          "113": "e",
+          "114": "d",
+          "115": "\"",
+          "116": ",",
+          "117": " ",
+          "118": "R",
+          "119": "E",
+          "120": "P",
+          "121": "L",
+          "122": "A",
+          "123": "C",
+          "124": "E",
+          "125": "(",
+          "126": "c",
+          "127": "l",
+          "128": "i",
+          "129": "e",
+          "130": "n",
+          "131": "t",
+          "132": ".",
+          "133": "G",
+          "134": "e",
+          "135": "o",
+          "136": ".",
+          "137": "C",
+          "138": "o",
+          "139": "u",
+          "140": "n",
+          "141": "t",
+          "142": "r",
+          "143": "y",
+          "144": "N",
+          "145": "a",
+          "146": "m",
+          "147": "e",
+          "148": ",",
+          "149": " ",
+          "150": "\"",
+          "151": ".",
+          "152": "\"",
+          "153": ",",
+          "154": " ",
+          "155": "\"",
+          "156": "\"",
+          "157": ")",
+          "158": ")",
+          "159": " ",
+          "160": "a",
+          "161": "s",
+          "162": " ",
+          "163": "C",
+          "164": "o",
+          "165": "u",
+          "166": "n",
+          "167": "t",
+          "168": "r",
+          "169": "y",
+          "170": "N",
+          "171": "a",
+          "172": "m",
+          "173": "e",
+          "174": "\n",
+          "175": "F",
+          "176": "R",
+          "177": "O",
+          "178": "M",
+          "179": " ",
+          "180": "`",
+          "181": "m",
+          "182": "e",
+          "183": "a",
+          "184": "s",
+          "185": "u",
+          "186": "r",
+          "187": "e",
+          "188": "m",
+          "189": "e",
+          "190": "n",
+          "191": "t",
+          "192": "-",
+          "193": "l",
+          "194": "a",
+          "195": "b",
+          "196": ".",
+          "197": "n",
+          "198": "d",
+          "199": "t",
+          "200": ".",
+          "201": "n",
+          "202": "d",
+          "203": "t",
+          "204": "7",
+          "205": "`",
+          "206": "\n",
+          "207": "W",
+          "208": "H",
+          "209": "E",
+          "210": "R",
+          "211": "E",
+          "212": " ",
+          "213": "d",
+          "214": "a",
+          "215": "t",
+          "216": "e",
+          "217": " ",
+          "218": "=",
+          "219": " ",
+          "220": "D",
+          "221": "A",
+          "222": "T",
+          "223": "E",
+          "224": "_",
+          "225": "S",
+          "226": "U",
+          "227": "B",
+          "228": "(",
+          "229": "C",
+          "230": "U",
+          "231": "R",
+          "232": "R",
+          "233": "E",
+          "234": "N",
+          "235": "T",
+          "236": "_",
+          "237": "D",
+          "238": "A",
+          "239": "T",
+          "240": "E",
+          "241": "(",
+          "242": ")",
+          "243": ",",
+          "244": " ",
+          "245": "I",
+          "246": "N",
+          "247": "T",
+          "248": "E",
+          "249": "R",
+          "250": "V",
+          "251": "A",
+          "252": "L",
+          "253": " ",
+          "254": "2",
+          "255": " ",
+          "256": "D",
+          "257": "A",
+          "258": "Y",
+          "259": ")",
+          "260": "\n",
+          "261": "A",
+          "262": "N",
+          "263": "D",
+          "264": " ",
+          "265": " ",
+          "266": "R",
+          "267": "E",
+          "268": "G",
+          "269": "E",
+          "270": "X",
+          "271": "P",
+          "272": "_",
+          "273": "C",
+          "274": "O",
+          "275": "N",
+          "276": "T",
+          "277": "A",
+          "278": "I",
+          "279": "N",
+          "280": "S",
+          "281": "(",
+          "282": "c",
+          "283": "l",
+          "284": "i",
+          "285": "e",
+          "286": "n",
+          "287": "t",
+          "288": ".",
+          "289": "G",
+          "290": "e",
+          "291": "o",
+          "292": ".",
+          "293": "C",
+          "294": "o",
+          "295": "n",
+          "296": "t",
+          "297": "i",
+          "298": "n",
+          "299": "e",
+          "300": "n",
+          "301": "t",
+          "302": "C",
+          "303": "o",
+          "304": "d",
+          "305": "e",
+          "306": ",",
+          "307": " ",
+          "308": "\"",
+          "309": "$",
+          "310": "{",
+          "311": "c",
+          "312": "o",
+          "313": "n",
+          "314": "t",
+          "315": "i",
+          "316": "n",
+          "317": "e",
+          "318": "n",
+          "319": "t",
+          "320": ":",
+          "321": "r",
+          "322": "e",
+          "323": "g",
+          "324": "e",
+          "325": "x",
+          "326": "}",
+          "327": "\"",
+          "328": ")",
+          "329": "\n",
+          "330": "G",
+          "331": "R",
+          "332": "O",
+          "333": "U",
+          "334": "P",
+          "335": " ",
+          "336": "B",
+          "337": "Y",
+          "338": " ",
+          "339": "C",
+          "340": "o",
+          "341": "u",
+          "342": "n",
+          "343": "t",
+          "344": "r",
+          "345": "y",
+          "346": "N",
+          "347": "a",
+          "348": "m",
+          "349": "e",
+          "350": "\n",
+          "351": ")",
+          "editorMode": "code",
+          "format": 1,
+          "location": "US",
+          "project": "measurement-lab",
+          "rawQuery": true,
+          "rawSql": "SELECT CountryName\nFROM (\nSELECT   \nIF ((client.Geo.CountryName = \"\" OR client.Geo.CountryName IS NULL), \"undefined\", REPLACE(client.Geo.CountryName, \".\", \"\")) as CountryName\nFROM `measurement-lab.ndt.ndt7`\nWHERE date = DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)\nAND  REGEXP_CONTAINS(client.Geo.ContinentCode, \"${continent:regex}\")\nGROUP BY CountryName\n)",
+          "refId": "tempvar",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": "all",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Client ASN",
+        "multi": true,
+        "name": "clientASN",
+        "options": [],
+        "query": {
+          "0": "S",
+          "1": "E",
+          "2": "L",
+          "3": "E",
+          "4": "C",
+          "5": "T",
+          "6": " ",
+          "7": " ",
+          "8": " ",
+          "9": "\n",
+          "10": " ",
+          "11": " ",
+          "12": "I",
+          "13": "F",
+          "14": " ",
+          "15": "(",
+          "16": "(",
+          "17": " ",
+          "18": "c",
+          "19": "l",
+          "20": "i",
+          "21": "e",
+          "22": "n",
+          "23": "t",
+          "24": ".",
+          "25": "N",
+          "26": "e",
+          "27": "t",
+          "28": "w",
+          "29": "o",
+          "30": "r",
+          "31": "k",
+          "32": ".",
+          "33": "A",
+          "34": "S",
+          "35": "N",
+          "36": "a",
+          "37": "m",
+          "38": "e",
+          "39": " ",
+          "40": "=",
+          "41": " ",
+          "42": "\"",
+          "43": "\"",
+          "44": " ",
+          "45": "O",
+          "46": "R",
+          "47": " ",
+          "48": "c",
+          "49": "l",
+          "50": "i",
+          "51": "e",
+          "52": "n",
+          "53": "t",
+          "54": ".",
+          "55": "N",
+          "56": "e",
+          "57": "t",
+          "58": "w",
+          "59": "o",
+          "60": "r",
+          "61": "k",
+          "62": ".",
+          "63": "A",
+          "64": "S",
+          "65": "N",
+          "66": "a",
+          "67": "m",
+          "68": "e",
+          "69": " ",
+          "70": "I",
+          "71": "S",
+          "72": " ",
+          "73": "N",
+          "74": "U",
+          "75": "L",
+          "76": "L",
+          "77": ")",
+          "78": ",",
+          "79": " ",
+          "80": "\"",
+          "81": "u",
+          "82": "n",
+          "83": "d",
+          "84": "e",
+          "85": "f",
+          "86": "i",
+          "87": "n",
+          "88": "e",
+          "89": "d",
+          "90": "\"",
+          "91": ",",
+          "92": " ",
+          "93": "R",
+          "94": "E",
+          "95": "P",
+          "96": "L",
+          "97": "A",
+          "98": "C",
+          "99": "E",
+          "100": "(",
+          "101": "c",
+          "102": "l",
+          "103": "i",
+          "104": "e",
+          "105": "n",
+          "106": "t",
+          "107": ".",
+          "108": "N",
+          "109": "e",
+          "110": "t",
+          "111": "w",
+          "112": "o",
+          "113": "r",
+          "114": "k",
+          "115": ".",
+          "116": "A",
+          "117": "S",
+          "118": "N",
+          "119": "a",
+          "120": "m",
+          "121": "e",
+          "122": ",",
+          "123": " ",
+          "124": "\"",
+          "125": ".",
+          "126": "\"",
+          "127": ",",
+          "128": " ",
+          "129": "\"",
+          "130": "\"",
+          "131": ")",
+          "132": ")",
+          "133": " ",
+          "134": "a",
+          "135": "s",
+          "136": " ",
+          "137": "c",
+          "138": "l",
+          "139": "i",
+          "140": "e",
+          "141": "n",
+          "142": "t",
+          "143": "A",
+          "144": "S",
+          "145": "N",
+          "146": "\n",
+          "147": "F",
+          "148": "R",
+          "149": "O",
+          "150": "M",
+          "151": " ",
+          "152": "`",
+          "153": "m",
+          "154": "e",
+          "155": "a",
+          "156": "s",
+          "157": "u",
+          "158": "r",
+          "159": "e",
+          "160": "m",
+          "161": "e",
+          "162": "n",
+          "163": "t",
+          "164": "-",
+          "165": "l",
+          "166": "a",
+          "167": "b",
+          "168": ".",
+          "169": "n",
+          "170": "d",
+          "171": "t",
+          "172": ".",
+          "173": "n",
+          "174": "d",
+          "175": "t",
+          "176": "7",
+          "177": "`",
+          "178": "\n",
+          "179": "W",
+          "180": "H",
+          "181": "E",
+          "182": "R",
+          "183": "E",
+          "184": " ",
+          "185": " ",
+          "186": "\n",
+          "187": "d",
+          "188": "a",
+          "189": "t",
+          "190": "e",
+          "191": " ",
+          "192": "=",
+          "193": " ",
+          "194": "D",
+          "195": "A",
+          "196": "T",
+          "197": "E",
+          "198": "_",
+          "199": "S",
+          "200": "U",
+          "201": "B",
+          "202": "(",
+          "203": "C",
+          "204": "U",
+          "205": "R",
+          "206": "R",
+          "207": "E",
+          "208": "N",
+          "209": "T",
+          "210": "_",
+          "211": "D",
+          "212": "A",
+          "213": "T",
+          "214": "E",
+          "215": "(",
+          "216": ")",
+          "217": ",",
+          "218": " ",
+          "219": "I",
+          "220": "N",
+          "221": "T",
+          "222": "E",
+          "223": "R",
+          "224": "V",
+          "225": "A",
+          "226": "L",
+          "227": " ",
+          "228": "2",
+          "229": " ",
+          "230": "D",
+          "231": "A",
+          "232": "Y",
+          "233": ")",
+          "234": "\n",
+          "235": " ",
+          "236": "A",
+          "237": "N",
+          "238": "D",
+          "239": " ",
+          "240": "I",
+          "241": "F",
+          "242": "(",
+          "243": "\"",
+          "244": "$",
+          "245": "{",
+          "246": "c",
+          "247": "o",
+          "248": "u",
+          "249": "n",
+          "250": "t",
+          "251": "r",
+          "252": "y",
+          "253": "}",
+          "254": "\"",
+          "255": "=",
+          "256": " ",
+          "257": "\"",
+          "258": "a",
+          "259": "l",
+          "260": "l",
+          "261": "\"",
+          "262": ",",
+          "263": " ",
+          "264": "T",
+          "265": "R",
+          "266": "U",
+          "267": "E",
+          "268": ",",
+          "269": " ",
+          "270": "R",
+          "271": "E",
+          "272": "G",
+          "273": "E",
+          "274": "X",
+          "275": "P",
+          "276": "_",
+          "277": "C",
+          "278": "O",
+          "279": "N",
+          "280": "T",
+          "281": "A",
+          "282": "I",
+          "283": "N",
+          "284": "S",
+          "285": "(",
+          "286": "c",
+          "287": "l",
+          "288": "i",
+          "289": "e",
+          "290": "n",
+          "291": "t",
+          "292": ".",
+          "293": "G",
+          "294": "e",
+          "295": "o",
+          "296": ".",
+          "297": "C",
+          "298": "o",
+          "299": "u",
+          "300": "n",
+          "301": "t",
+          "302": "r",
+          "303": "y",
+          "304": "N",
+          "305": "a",
+          "306": "m",
+          "307": "e",
+          "308": ",",
+          "309": " ",
+          "310": "\"",
+          "311": "$",
+          "312": "{",
+          "313": "c",
+          "314": "o",
+          "315": "u",
+          "316": "n",
+          "317": "t",
+          "318": "r",
+          "319": "y",
+          "320": ":",
+          "321": "r",
+          "322": "e",
+          "323": "g",
+          "324": "e",
+          "325": "x",
+          "326": "}",
+          "327": "\"",
+          "328": ")",
+          "329": ")",
+          "330": "\n",
+          "331": "G",
+          "332": "R",
+          "333": "O",
+          "334": "U",
+          "335": "P",
+          "336": " ",
+          "337": "B",
+          "338": "Y",
+          "339": " ",
+          "340": "c",
+          "341": "l",
+          "342": "i",
+          "343": "e",
+          "344": "n",
+          "345": "t",
+          "346": "A",
+          "347": "S",
+          "348": "N",
+          "349": "\n",
+          "350": "O",
+          "351": "R",
+          "352": "D",
+          "353": "E",
+          "354": "R",
+          "355": " ",
+          "356": "b",
+          "357": "y",
+          "358": " ",
+          "359": "c",
+          "360": "l",
+          "361": "i",
+          "362": "e",
+          "363": "n",
+          "364": "t",
+          "365": "A",
+          "366": "S",
+          "367": "N",
+          "368": " ",
+          "369": "\n",
+          "editorMode": "code",
+          "format": 1,
+          "location": "US",
+          "project": "measurement-lab",
+          "rawQuery": true,
+          "rawSql": "SELECT   \n  IF (( client.Network.ASName = \"\" OR client.Network.ASName IS NULL), \"undefined\", REPLACE(client.Network.ASName, \".\", \"\")) as clientASN\nFROM `measurement-lab.ndt.ndt7`\nWHERE  \ndate = DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)\n AND IF(\"${country}\"= \"all\", TRUE, REGEXP_CONTAINS(client.Geo.CountryName, \"${country:regex}\"))\nGROUP BY clientASN\nORDER by clientASN ",
+          "refId": "tempvar",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "100",
+          "value": "100"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Percentile",
+        "multi": false,
+        "name": "percentile",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "95",
+            "value": "95"
+          },
+          {
+            "selected": true,
+            "text": "100",
+            "value": "100"
+          }
+        ],
+        "query": "1,50, 95, 100",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "day",
+          "value": "day"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Per",
+        "multi": false,
+        "name": "time_segment",
+        "options": [
+          {
+            "selected": false,
+            "text": "hour",
+            "value": "hour"
+          },
+          {
+            "selected": true,
+            "text": "day",
+            "value": "day"
+          }
+        ],
+        "query": "hour,day",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Prototype",
+  "uid": "d34f3876-79a9-4a34-98b6-7b245cb2e1ba",
+  "version": 5,
+  "weekStart": ""
+}
