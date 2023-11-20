@@ -6,6 +6,7 @@ ENV GF_INSTALL_PLUGINS="nline-plotlyjs-panel,grafana-bigquery-datasource"
 #ENV GF_SECURITY_DISABLE_INITIAL_ADMIN_CREATION="true"
 ENV GF_PATHS_PROVISIONING="/etc/grafana/provisioning"
 ENV GF_SERVER_HTTP_PORT="8080"
+ENV GF_SERVER_ROOT_URL="https://grafana-public-dot-mlab-sandbox.ue.r.appspot.com"
 ENV GF_USERS_ALLOW_ORG_CREATE="false"
 ENV GF_USERS_ALLOW_SIGN_UP="false"
 
