@@ -977,10 +977,13 @@
       {
         "allValue": "",
         "current": {
-          "isNone": true,
-          "selected": false,
-          "text": "None",
-          "value": ""
+          "selected": true,
+          "text": [],
+          "value": []
+        },
+        "datasource": {
+          "type": "grafana-bigquery-datasource",
+          "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
         },
         "definition": "",
         "hide": 0,
@@ -1025,12 +1028,12 @@
         "allValue": "all",
         "current": {
           "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
+          "text": [],
+          "value": []
+        },
+        "datasource": {
+          "type": "grafana-bigquery-datasource",
+          "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
         },
         "definition": "",
         "hide": 0,
@@ -1045,7 +1048,7 @@
           "location": "US",
           "project": "measurement-lab",
           "rawQuery": true,
-          "rawSql": "FROM (\nSELECT   \nIF ((client.Geo.CountryName = \"\" OR client.Geo.CountryName IS NULL), \"undefined\", REPLACE(client.Geo.CountryName, \".\", \"\")) as CountryName\nFROM `measurement-lab.ndt.ndt7`\nWHERE date = DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)\nAND  REGEXP_CONTAINS(client.Geo.ContinentCode, \"${continent:regex}\")\nGROUP BY CountryName\n)",
+          "rawSql": "SELECT CountryName\nFROM (\nSELECT   \nIF ((client.Geo.CountryName = \"\" OR client.Geo.CountryName IS NULL), \"undefined\", REPLACE(client.Geo.CountryName, \".\", \"\")) as CountryName\nFROM `measurement-lab.ndt.ndt7`\nWHERE date = DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)\nAND  REGEXP_CONTAINS(client.Geo.ContinentCode, \"${continent:regex}\")\nGROUP BY CountryName\n)",
           "refId": "tempvar",
           "sql": {
             "columns": [
@@ -1081,6 +1084,10 @@
           "value": [
             "$__all"
           ]
+        },
+        "datasource": {
+          "type": "grafana-bigquery-datasource",
+          "uid": "df3b499c-d71c-4203-8ecc-bee46fb25979"
         },
         "definition": "",
         "hide": 0,
