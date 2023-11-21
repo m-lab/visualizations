@@ -10,6 +10,10 @@ ENV GF_SERVER_ROOT_URL="https://grafana-public-dot-mlab-sandbox.ue.r.appspot.com
 ENV GF_USERS_ALLOW_ORG_CREATE="false"
 ENV GF_USERS_ALLOW_SIGN_UP="false"
 
+ENV GF_AUTH_ANONYMOUS_ENABLED="true"
+ENV GF_AUTH_ANONYMOUS_ORG_NAME="M-Lab"
+ENV GF_AUTH_ANONYMOUS_ORG_ROLE="Viewer"
+
 COPY dashboards/* /var/lib/grafana/dashboards/
 COPY provisioning/dashboards/* /etc/grafana/provisioning/dashboards/
 COPY provisioning/datasources/* /etc/grafana/provisioning/datasources/
