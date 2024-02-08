@@ -19,6 +19,7 @@ steps:
         ;;
       *)
         SERVER_ROOT_URL="grafana-public-dot-mlab-sandbox.ue.r.appspot.com"
+        ;;
     esac
 
     sed -e "s/{{SERVER_ROOT_URL}}/$$SERVER_ROOT_URL/" \
