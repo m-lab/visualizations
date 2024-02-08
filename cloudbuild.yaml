@@ -21,7 +21,7 @@ steps:
         SERVER_ROOT_URL="grafana-public-dot-mlab-sandbox.ue.r.appspot.com"
     esac
 
-    sed -e "s/{{SERVER_ROOT_URL}}/$SERVER_ROOT_URL/" \
+    sed -e "s/{{SERVER_ROOT_URL}}/\$SERVER_ROOT_URL/" \
       grafana-public/app.yaml.template > \
       grafana-public/app.yaml
 - name: gcr.io/$PROJECT_ID/gcloud-jsonnet-cbif:1.18
