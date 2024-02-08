@@ -7,6 +7,24 @@ options:
 # Deploy public Grafana instance in AppEngine
 steps:
 - name: gcr.io/$PROJECT_ID/gcloud-jsonnet-cbif:1.18
+  entrypoint: /bin/bash
+  args:
+  - |
+    case "$PROJECT_ID" in
+      "mlab-oti")
+        SERVER_ROOT_URL="grafana.measurementlab.net"
+        ;;
+      "mlab-staging")
+        SERVER_ROOT_URL="grafana-public-dot-mlab-staging.ue.r.appspot.com"
+        ;;
+      *)
+        SERVER_ROOT_URL="grafana-public-dot-mlab-sandbox.ue.r.appspot.com"
+    esac
+
+    sed -e "s/{{SERVER_ROOT_URL}}/$SERVER_ROOT_URL/" \
+      grafana-public/app.yaml.template > \
+      grafana-public/app.yaml
+- name: gcr.io/$PROJECT_ID/gcloud-jsonnet-cbif:1.18
   env:
   - PROJECT_IN=mlab-sandbox
   args:

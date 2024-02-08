@@ -1,4 +1,6 @@
 env: flex
+env_variables:
+  GF_SERVER_ROOT_URL="https://{{SERVER_ROOT_URL}}"
 network:
   session_affinity: true
 runtime: custom
