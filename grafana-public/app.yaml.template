@@ -1,9 +1,8 @@
 env: flex
 env_variables:
-  GF_SERVER_ROOT_URL="https://{{SERVER_ROOT_URL}}"
+  GF_SERVER_ROOT_URL: "https://{{SERVER_ROOT_URL}}"
 network:
   session_affinity: true
 runtime: custom
 service: grafana-public
 service_account: grafana-public@mlab-sandbox.iam.gserviceaccount.com
-
