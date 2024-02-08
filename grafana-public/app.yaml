@@ -1,6 +1,7 @@
-runtime: custom
 env: flex
-service: grafana-public
-
 network:
   session_affinity: true
+runtime: custom
+service: grafana-public
+service_account: grafana-public@mlab-sandbox.iam.gserviceaccount.com
+
