@@ -1,0 +1,8 @@
+env: flex
+env_variables:
+  GF_SERVER_ROOT_URL: "{{SERVER_ROOT_URL}}"
+network:
+  session_affinity: true
+runtime: custom
+service: grafana-public
+service_account: grafana-public@{{PROJECT_ID}}.iam.gserviceaccount.com
