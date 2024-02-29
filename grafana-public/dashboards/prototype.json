@@ -192,7 +192,7 @@
           "text": "Google BigQuery (mlab-oti)",
           "value": "PE8D1C7E267159A85"
         },
-        "hide": 0,
+        "hide": 2,
         "includeAll": false,
         "multi": false,
         "name": "datasource",
@@ -213,6 +213,6 @@
   "timezone": "",
   "title": "NDT7: World Map",
   "uid": "1",
-  "version": 10,
+  "version": 11,
   "weekStart": ""
 }
