@@ -177,7 +177,7 @@
           }
         }
       ],
-      "title": "NDT7 Download Median Rate per unique Lat/Lon pair",
+      "title": "Median download rates",
       "type": "geomap"
     }
   ],
@@ -213,6 +213,6 @@
   "timezone": "",
   "title": "NDT7: World Map",
   "uid": "1",
-  "version": 11,
+  "version": 12,
   "weekStart": ""
 }
