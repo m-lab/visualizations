@@ -33,6 +33,7 @@
         "type": "grafana-bigquery-datasource",
         "uid": "${datasource}"
       },
+      "description": "The M-Lab ndt7 dataset sees around ~4M tests/day. There are around 60k unique lat/lon pairs all over the world. For performance, only 2500 points are displayed at once. You can see a different set of points by reloading the dashboard.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -213,6 +214,6 @@
   "timezone": "",
   "title": "NDT7: World Map",
   "uid": "1",
-  "version": 12,
+  "version": 13,
   "weekStart": ""
 }
