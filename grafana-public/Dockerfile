@@ -10,6 +10,7 @@ ENV GF_PATHS_PROVISIONING="/etc/grafana/provisioning"
 ENV GF_SECURITY_DISABLE_INITIAL_ADMIN_CREATION="true"
 ENV GF_SERVER_HTTP_PORT="8080"
 ENV GF_USERS_HOME_PAGE="/d/1"
+ENV GF_DASHBOARDS_MIN_REFRESH_INTERVAL="1h"
 
 COPY dashboards/* /var/lib/grafana/dashboards/
 COPY provisioning/dashboards/* /etc/grafana/provisioning/dashboards/
