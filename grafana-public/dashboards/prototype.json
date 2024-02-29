@@ -4,8 +4,8 @@
       {
         "builtIn": 1,
         "datasource": {
-          "type": "grafana",
-          "uid": "-- Grafana --"
+          "type": "datasource",
+          "uid": "grafana"
         },
         "enable": true,
         "hide": true,
@@ -24,936 +24,140 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 438,
+  "id": 458,
   "links": [],
   "liveNow": false,
   "panels": [
     {
-      "collapsed": false,
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 25
+              },
+              {
+                "color": "green",
+                "value": 50
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
-        "h": 1,
+        "h": 28,
         "w": 24,
         "x": 0,
         "y": 0
       },
-      "id": 11,
-      "panels": [],
-      "title": "Performance",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
-      },
-      "gridPos": {
-        "h": 15,
-        "w": 12,
-        "x": 0,
-        "y": 1
-      },
-      "id": 14,
-      "options": {
-        "config": {
-          "displayModeBar": false
-        },
-        "data": [],
-        "layout": {
-          "font": {
-            "color": "grey"
-          },
-          "margin": {
-            "b": 50,
-            "l": 50,
-            "r": 50,
-            "t": 10
-          },
-          "paper_bgcolor": "rgba(0, 0, 0, 0)",
-          "plot_bgcolor": "rgba(0, 0, 0, 0)",
-          "xaxis": {
-            "autorange": true,
-            "gridcolor": "#333",
-            "range": [
-              -0.013228265733755159,
-              3.469998642218747
-            ],
-            "title": {
-              "text": "Mbps"
-            },
-            "type": "log"
-          },
-          "yaxis": {
-            "autorange": true,
-            "gridcolor": "#333",
-            "range": [
-              -0.0010184147341910808,
-              0.019600543617161598
-            ],
-            "title": {
-              "text": "Frequency"
-            },
-            "type": "linear"
-          }
-        },
-        "onclick": "",
-        "script": "console.log(data);\nvar types = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(type => {\n  types[type] = {\n    x: [],\n    y: [],\n    name: type,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  types[names[i]].x.push(x[i]);\n  types[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(types).sort().forEach(type => {\n  data.push(types[type]);\n});\nconsole.log(data);\nvar trace = {\n  x: x,\n  y: y,\n  name: names\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\nreturn {data:data};"
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "doitintl-bigquery-datasource",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "format": 0,
-          "group": [],
-          "location": "US",
-          "metricColumn": "none",
-          "orderByCol": "1",
-          "orderBySort": "1",
-          "project": "mlab-oti",
-          "rawQuery": true,
-          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), ndt7_and_offset AS (\n\n  SELECT *, ARRAY_LENGTH(raw.Download.ServerMeasurements) AS dlm_length, \n  IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS test_type\n  FROM ndt.ndt7\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download is not NULL \n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n   AND (\"ist\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ClientMetadata) AS metadata))\n   AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n   AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n   AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\n\n), pdf_sort AS (\n  SELECT bucket_left, bucket_right, test_type, IF(a.MeanThroughputMbps BETWEEN bucket_left AND bucket_right, 1, 0) AS present_true\n  FROM ndt7_and_offset, steps\n), pdf_totals AS (  \n  SELECT bucket_left AS buckets, test_type, sum(present_true) AS total_true\n  FROM   pdf_sort\n  GROUP BY bucket_left, test_type\n  ORDER BY bucket_left\n), pdf_product  AS (\n  SELECT\n    total_true,\n    test_type,\n    trunc(buckets,2) as buckets,\n    total_true AS product_true,\n  FROM pdf_totals\n  ORDER BY buckets\n), cdf_tests_and_bytes AS (\n  SELECT  \n    buckets,\n    test_type,\n    product_true / SUM(product_true) OVER (partition BY test_type) AS normalized,\n    \n  FROM pdf_product\n  ORDER BY buckets\n)\nSELECT\n  buckets,\n  normalized,\n  test_type,\n\nFROM cdf_tests_and_bytes",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "-- value --"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          },
-          "timeColumn": "-- time --",
-          "timeColumnType": "DATE",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Scatter Chart (Download Mbps PDF, normalized)",
-      "type": "ae3e-plotly-panel"
-    },
-    {
-      "datasource": {
-        "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
-      },
-      "gridPos": {
-        "h": 15,
-        "w": 12,
-        "x": 12,
-        "y": 1
-      },
-      "id": 13,
-      "options": {
-        "config": {
-          "displayModeBar": false
-        },
-        "data": [],
-        "layout": {
-          "font": {
-            "color": "grey"
-          },
-          "margin": {
-            "b": 50,
-            "l": 50,
-            "r": 50,
-            "t": 10
-          },
-          "paper_bgcolor": "rgba(0, 0, 0, 0)",
-          "plot_bgcolor": "rgba(0, 0, 0, 0)",
-          "xaxis": {
-            "autorange": true,
-            "gridcolor": "#333",
-            "range": [
-              -0.013228265733755159,
-              3.469998642218747
-            ],
-            "title": {
-              "text": "Test Size (MB)"
-            },
-            "type": "log"
-          },
-          "yaxis": {
-            "autorange": true,
-            "gridcolor": "#333",
-            "range": [
-              -0.009606481712044423,
-              0.18252315252884402
-            ],
-            "title": {
-              "text": "Frequency"
-            },
-            "type": "linear"
-          }
-        },
-        "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
-        "script": "console.log(data);\nvar types = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(type => {\n  types[type] = {\n    x: [],\n    y: [],\n    name: type,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  types[names[i]].x.push(x[i]);\n  types[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(types).sort().forEach(type => {\n  data.push(types[type]);\n});\nconsole.log(data);\nvar trace = {\n  x: x,\n  y: y,\n  name: names\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\nreturn {data:data};"
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "doitintl-bigquery-datasource",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "format": 0,
-          "group": [],
-          "location": "US",
-          "metricColumn": "none",
-          "orderByCol": "1",
-          "orderBySort": "1",
-          "project": "mlab-oti",
-          "rawQuery": true,
-          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), ndt7_and_offset AS (\n\n  SELECT *, ARRAY_LENGTH(raw.Download.ServerMeasurements) AS dlm_length, \n  IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS test_type\n  FROM ndt.ndt7\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download is not NULL \n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n   AND (\"ist\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ClientMetadata) AS metadata))\n   AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n   AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n   AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\n\n), pdf_sort AS (\n\n  SELECT bucket_left, bucket_right, test_type, IF(raw.Download.ServerMeasurements[OFFSET(dlm_length-1)].TCPInfo.BytesSent/1e6 BETWEEN bucket_left AND bucket_right, 1, 0) AS present,\n  FROM ndt7_and_offset, steps\n\n), pdf_totals AS (  \n\n  SELECT \n    bucket_left AS bytes_sent,\n    test_type,\n    sum(present) AS total_observations, \n  FROM pdf_sort\n  GROUP BY bucket_left, test_type\n  ORDER BY bucket_left\n\n), pdf_total_bytes  AS (\n\n  SELECT total_observations, test_type, trunc(bytes_sent,2) as bytes_sent, bytes_sent*total_observations AS total_bytes,\n  FROM pdf_totals\n  ORDER BY bytes_sent\n\n), cdf_tests_and_bytes AS (\n\n  SELECT  \n    bytes_sent AS byte_sent_bucket,\n    test_type,\n    total_bytes AS total_bytes_transmitted,\n    total_bytes / SUM(total_bytes) OVER (PARTITION BY test_type) AS normalized,\n    SUM(total_bytes) OVER (ORDER BY bytes_sent ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS total_bytes_transmitted_cumulative,\n    SUM(total_observations) OVER (ORDER BY bytes_sent ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS total_tests_cumulative,\n  FROM pdf_total_bytes\n  ORDER BY bytes_sent\n)\n\nSELECT byte_sent_bucket, normalized, test_type\nFROM cdf_tests_and_bytes",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "-- value --"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          },
-          "timeColumn": "-- time --",
-          "timeColumnType": "DATE",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Scatter Chart (MBs Sent PDF, normalized)",
-      "type": "ae3e-plotly-panel"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 16
-      },
-      "id": 10,
-      "panels": [],
-      "title": "Rollout",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "Percent",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 6,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 3,
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 15,
-        "w": 12,
-        "x": 0,
-        "y": 17
-      },
-      "id": 2,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "doitintl-bigquery-datasource",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "format": 0,
-          "group": [],
-          "hide": false,
-          "location": "US",
-          "metricColumn": "none",
-          "orderByCol": "1",
-          "orderBySort": "1",
-          "project": "mlab-oti",
-          "rawQuery": true,
-          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    ndt.ndt7\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n    AND raw.Download is not NULL \n    AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n    AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n    AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\n),\n\nagg AS (\n  SELECT\n    TIMESTAMP(date) AS time,\n    typ AS metric,\n    COUNT(*) AS total\n  FROM\n    ndt7\n  GROUP BY\n    date,\n    metric\n)\n\nSELECT\n  time,\n  metric,\n  total / SUM(total) OVER(partition BY time) AS ratio\nFROM\n  agg\nORDER BY time ASC",
-          "refId": "B",
-          "select": [
-            [
-              {
-                "params": [
-                  "-- value --"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          },
-          "timeColumn": "-- time --",
-          "timeColumnType": "TIMESTAMP",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Percentage of Early Exit Tests",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "blue",
-            "mode": "palette-classic",
-            "seriesBy": "min"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "Test Count",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "stepAfter",
-            "lineWidth": 1,
-            "pointSize": 6,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 15,
-        "w": 12,
-        "x": 12,
-        "y": 17
-      },
-      "id": 4,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "doitintl-bigquery-datasource",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "format": 0,
-          "group": [],
-          "location": "US",
-          "metricColumn": "none",
-          "orderByCol": "1",
-          "orderBySort": "1",
-          "project": "mlab-oti",
-          "rawQuery": true,
-          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    ndt.ndt7\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n    AND raw.Download is not NULL \n    AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n    AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n    AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\n)\n\nSELECT\n  TIMESTAMP(date) AS time,\n  typ AS metric,\n  COUNT(*) AS total\nFROM\n  ndt7\nGROUP BY\n  date,\n  metric\nORDER BY time ASC",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "-- value --"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          },
-          "timeColumn": "-- time --",
-          "timeColumnType": "TIMESTAMP",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Daily Early Exit Test Count",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "TB Transferred",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 12,
-        "x": 0,
-        "y": 32
-      },
       "id": 7,
+      "maxDataPoints": 4000,
       "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true
+        "basemap": {
+          "config": {},
+          "name": "Layer 0",
+          "type": "default"
         },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "doitintl-bigquery-datasource",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "format": 0,
-          "group": [],
-          "location": "US",
-          "metricColumn": "none",
-          "orderByCol": "1",
-          "orderBySort": "1",
-          "project": "mlab-oti",
-          "rawQuery": true,
-          "rawSql": "WITH\n ndt7 AS (\n SELECT\n   id,\n   date, \n   IF (\"virtual\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ServerMetadata) AS metadata), \"Virtual\", \"Physical\") AS machine,\n   ARRAY_REVERSE(raw.Download.ServerMeasurements)[OFFSET(0)].TCPInfo.BytesAcked/1000000 AS totalMB\n FROM\n   ndt.ndt7\n WHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0 \n   AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n   AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n   AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\n)\n\nSELECT TIMESTAMP(date) AS time, machine AS metric, SUM(totalMB) / 1000000 AS totalTB \nFROM ndt7 \nGROUP BY date, machine\nORDER BY time ASC",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "-- value --"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showMeasure": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "showLegend": true,
+              "style": {
+                "color": {
+                  "field": "value",
+                  "fixed": "dark-green"
                 },
-                "type": "groupBy"
+                "opacity": 0.6,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "field": "value",
+                  "fixed": 1,
+                  "max": 7,
+                  "min": 1
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
               }
-            ],
-            "limit": 50
-          },
-          "timeColumn": "-- time --",
-          "timeColumnType": "TIMESTAMP",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Amount of Data Transferred",
-      "transformations": [],
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "TB Transferred",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
             },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
+            "location": {
+              "geohash": "metricx",
+              "latitude": "latitude",
+              "longitude": "longitude",
+              "mode": "coords"
             },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
+            "name": "Layer 3",
+            "type": "markers"
           }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 12,
-        "x": 12,
-        "y": 32
-      },
-      "id": 6,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true
-        },
+        ],
         "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "doitintl-bigquery-datasource",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "format": 0,
-          "group": [],
-          "location": "US",
-          "metricColumn": "none",
-          "orderByCol": "1",
-          "orderBySort": "1",
-          "project": "mlab-oti",
-          "rawQuery": true,
-          "rawSql": "WITH\n ndt7 AS (\n SELECT\n   id,\n   date, \n   IF (\"virtual\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ServerMetadata) AS metadata), \"Virtual\", \"Physical\") AS machine,\n   IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"early exit\", \"full test\") AS length,\n   ARRAY_REVERSE(raw.Download.ServerMeasurements)[OFFSET(0)].TCPInfo.BytesAcked/1000000 AS totalMB\n FROM\n   ndt.ndt7\n WHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0 \n   AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n   AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n   AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\n),\n\nagg AS (\n  SELECT TIMESTAMP(date) AS time, machine, length, SUM(totalMB) / 1000000 AS totalTB \n  FROM ndt7 \n  GROUP BY date, machine, length\n)\n\nSELECT time, CONCAT(machine, ' - ', length) AS metric, totalTB\nFROM agg\nORDER BY time ASC",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "-- value --"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          },
-          "timeColumn": "-- time --",
-          "timeColumnType": "TIMESTAMP",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Amount of Data Transferred (split)",
-      "transformations": [],
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "Test Count",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 2,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
+          "mode": "details"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 12,
-        "x": 0,
-        "y": 43
-      },
-      "id": 15,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
+        "view": {
+          "allLayers": true,
+          "id": "coords",
+          "lat": 19.164388,
+          "lon": -0.433855,
+          "zoom": 2.21
         }
       },
       "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
-            "type": "doitintl-bigquery-datasource",
+            "type": "grafana-bigquery-datasource",
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "format": 0,
-          "group": [],
+          "format": 1,
           "location": "US",
-          "metricColumn": "none",
-          "orderByCol": "1",
-          "orderBySort": "1",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "SELECT \n  TIMESTAMP_TRUNC(TIMESTAMP(date), WEEK, \"UTC\") AS time,\n  COUNT(*) AS testCount\nFROM \n  ndt.ndt7\nWHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND DATE_TRUNC(date, WEEK) != DATE_TRUNC(CURRENT_DATE, WEEK)\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n   AND (\"ist\" IN ( SELECT metadata.Value FROM UNNEST(raw.Download.ClientMetadata) AS metadata))\n   AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n   AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n   AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\nGROUP BY time\nORDER BY time",
+          "rawSql": "WITH ndt7 AS (\n  SELECT\n    a.MeanThroughputMbps as rate,\n    client.Geo.Latitude AS latitude,\n    client.Geo.Longitude AS longitude,\n  FROM\n    `measurement-lab.ndt.ndt7`\n  WHERE\n      date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n    -- Basic test quality filters for safe division.\n    AND raw.Download is not NULL\n),\ntests AS (\nSELECT\n  latitude, longitude,\n  APPROX_QUANTILES(rate, 10)[OFFSET(5)] AS value,\n  COUNT(*) as value_tests,\nFROM\n  ndt7\nGROUP BY\n  latitude, longitude\nHAVING\n  value_tests > 10\n  AND value IS NOT NULL\n  AND latitude IS NOT NULL and longitude IS NOT NULL\n)\n\nSELECT CURRENT_TIMESTAMP() as time,\n   latitude, longitude, value\nFROM tests\nLIMIT 2500\n",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "-- value --"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
           "sql": {
             "columns": [
               {
@@ -970,160 +174,11 @@
               }
             ],
             "limit": 50
-          },
-          "timeColumn": "-- time --",
-          "timeColumnType": "TIMESTAMP",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Weekly Tests (IST)",
-      "transformations": [],
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "TB Transferred",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
           }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 12,
-        "x": 12,
-        "y": 43
-      },
-      "id": 16,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "doitintl-bigquery-datasource",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "format": 0,
-          "group": [],
-          "location": "US",
-          "metricColumn": "none",
-          "orderByCol": "1",
-          "orderBySort": "1",
-          "project": "mlab-oti",
-          "rawQuery": true,
-          "rawSql": "SELECT \n  TIMESTAMP_TRUNC(TIMESTAMP(date), WEEK, \"UTC\") AS time,\n  SUM(ARRAY_REVERSE(raw.Download.ServerMeasurements)[OFFSET(0)].TCPInfo.BytesAcked)/1000000000000 AS totalTB\nFROM \n  ndt.ndt7\nWHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND DATE_TRUNC(date, WEEK) != DATE_TRUNC(CURRENT_DATE, WEEK)\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0 \n   AND (\"ist\" IN ( SELECT metadata.Value FROM UNNEST(raw.Download.ClientMetadata) AS metadata))\n   AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n   AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n   AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\nGROUP BY time\nORDER BY time",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "-- value --"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          },
-          "timeColumn": "-- time --",
-          "timeColumnType": "TIMESTAMP",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
         }
       ],
-      "title": "Weekly Data Transferred (IST)",
-      "transformations": [],
-      "type": "timeseries"
+      "title": "NDT7 Download Median Rate per unique Lat/Lon pair",
+      "type": "geomap"
     }
   ],
   "refresh": "",
@@ -1139,139 +194,24 @@
         },
         "hide": 0,
         "includeAll": false,
-        "label": "BigQuery Datasource",
         "multi": false,
         "name": "datasource",
         "options": [],
         "query": "grafana-bigquery-datasource",
-        "queryValue": "",
         "refresh": 1,
-        "regex": "/^Google BigQuery/",
+        "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
-      },
-      {
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "datasource": {
-          "type": "doitintl-bigquery-datasource",
-          "uid": "${datasource}"
-        },
-        "definition": "SELECT SUBSTR(server.Site, 0, 3) AS metro,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nGROUP BY metro\nORDER BY metro",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Metro",
-        "multi": true,
-        "name": "metro",
-        "options": [],
-        "query": "SELECT SUBSTR(server.Site, 0, 3) AS metro,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nGROUP BY metro\nORDER BY metro",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "datasource": {
-          "type": "doitintl-bigquery-datasource",
-          "uid": "${datasource}"
-        },
-        "definition": "SELECT server.Site AS site,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nAND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\nGROUP BY site\nORDER BY site",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Site",
-        "multi": true,
-        "name": "site",
-        "options": [],
-        "query": "SELECT server.Site AS site,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nAND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\nGROUP BY site\nORDER BY site",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": ".*",
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
-        },
-        "description": "",
-        "hide": 0,
-        "includeAll": true,
-        "label": "LGA ASNs (sample)",
-        "multi": false,
-        "name": "as",
-        "options": [
-          {
-            "selected": true,
-            "text": "All",
-            "value": "$__all"
-          },
-          {
-            "selected": false,
-            "text": "21928",
-            "value": "21928"
-          },
-          {
-            "selected": false,
-            "text": "12271",
-            "value": "12271"
-          },
-          {
-            "selected": false,
-            "text": "22616",
-            "value": "22616"
-          },
-          {
-            "selected": false,
-            "text": "14593",
-            "value": "14593"
-          },
-          {
-            "selected": false,
-            "text": "701",
-            "value": "701"
-          },
-          {
-            "selected": false,
-            "text": "6128",
-            "value": "6128"
-          }
-        ],
-        "query": "21928, 12271, 22616, 14593, 701, 6128",
-        "queryValue": "",
-        "skipUrlSync": false,
-        "type": "custom"
       }
     ]
   },
   "time": {
-    "from": "now-4M",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
-  "title": "NDT: Early Exit",
-  "uid": "1",
-  "version": 40,
+  "title": "NDT7: World Map",
+  "version": 8,
   "weekStart": ""
 }
-
