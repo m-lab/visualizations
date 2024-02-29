@@ -156,7 +156,7 @@
           "location": "US",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "WITH ndt7 AS (\n  SELECT\n    a.MeanThroughputMbps as rate,\n    client.Geo.Latitude AS latitude,\n    client.Geo.Longitude AS longitude,\n  FROM\n    `measurement-lab.ndt.ndt7`\n  WHERE\n      date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n    -- Basic test quality filters for safe division.\n    AND raw.Download is not NULL\n),\ntests AS (\nSELECT\n  latitude, longitude,\n  APPROX_QUANTILES(rate, 10)[OFFSET(5)] AS value,\n  COUNT(*) as value_tests,\nFROM\n  ndt7\nGROUP BY\n  latitude, longitude\nHAVING\n  value_tests > 10\n  AND value IS NOT NULL\n  AND latitude IS NOT NULL and longitude IS NOT NULL\n)\n\nSELECT CURRENT_TIMESTAMP() as time,\n   latitude, longitude, value\nFROM tests\nLIMIT 1250\n",
+          "rawSql": "WITH ndt7 AS (\n  SELECT\n    a.MeanThroughputMbps as rate,\n    client.Geo.Latitude AS latitude,\n    client.Geo.Longitude AS longitude,\n  FROM\n    `measurement-lab.ndt.ndt7`\n  WHERE\n      date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n    -- Basic test quality filters for safe division.\n    AND raw.Download is not NULL\n),\ntests AS (\nSELECT\n  latitude, longitude,\n  APPROX_QUANTILES(rate, 10)[OFFSET(5)] AS value,\n  COUNT(*) as value_tests,\nFROM\n  ndt7\nGROUP BY\n  latitude, longitude\nHAVING\n  value_tests > 10\n  AND value IS NOT NULL\n  AND latitude IS NOT NULL and longitude IS NOT NULL\n)\n\nSELECT CURRENT_TIMESTAMP() as time,\n   latitude, longitude, value\nFROM tests\nLIMIT 2500\n",
           "refId": "A",
           "sql": {
             "columns": [
