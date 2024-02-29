@@ -9,7 +9,7 @@ ENV GF_LOG_LEVEL="warn"
 ENV GF_PATHS_PROVISIONING="/etc/grafana/provisioning"
 ENV GF_SECURITY_DISABLE_INITIAL_ADMIN_CREATION="true"
 ENV GF_SERVER_HTTP_PORT="8080"
-ENV GF_USERS_HOME_PAGE="/d/1/prototype"
+ENV GF_USERS_HOME_PAGE="/d/1"
 
 COPY dashboards/* /var/lib/grafana/dashboards/
 COPY provisioning/dashboards/* /etc/grafana/provisioning/dashboards/
