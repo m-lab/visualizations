@@ -4,9 +4,17 @@ options:
   env:
   - PROJECT_ID=$PROJECT_ID
 
+# We have $_IMAGE_PROJECT in a Cloud Build user-defined substitution variable
+# because this build gets run in more projects that just the standard
+# sandbox->staging->prod, but those projects are the only ones where the
+# container images are built and pushed to Artifact Registry. The other
+# production project where this build will happen is "measurement-lab", which
+# is a production project, so we want to use the "mlab-oti" (prod) image. The
+# value of this variable is defined in the build trigger of each project.
+#
 # Deploy public Grafana instance in AppEngine
 steps:
-- name: gcr.io/$PROJECT_ID/gcloud-jsonnet-cbif:1.18
+- name: us-central1-docker.pkg.dev/${_IMAGE_PROJECT}/build-images/gcloud-jsonnet-cbif:1.1
   entrypoint: /bin/bash
   args:
   - -c
@@ -15,7 +23,7 @@ steps:
         -e 's|{{PROJECT_ID}}|${PROJECT_ID}|' \
         grafana-public/app.yaml.template > \
         grafana-public/app.yaml
-- name: gcr.io/$PROJECT_ID/gcloud-jsonnet-cbif:1.18
+- name: us-central1-docker.pkg.dev/${_IMAGE_PROJECT}/build-images/gcloud-jsonnet-cbif:1.1
   env:
   - PROJECT_IN=mlab-sandbox,mlab-staging,measurement-lab
   args:
