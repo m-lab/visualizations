@@ -1,0 +1,4 @@
+dispatch:
+# Route all requests to the grafana-public service.
+- service: grafana-public
+  url: "dashboards.measurementlab.net/*"

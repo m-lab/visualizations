@@ -28,3 +28,9 @@ steps:
   - PROJECT_IN=mlab-sandbox,mlab-staging,measurement-lab
   args:
   - gcloud app deploy grafana-public/app.yaml --project $PROJECT_ID
+
+- name: us-central1-docker.pkg.dev/${_IMAGE_PROJECT}/build-images/gcloud-jsonnet-cbif:1.1
+  env:
+  - PROJECT_IN=measurement-lab
+  args:
+  - gcloud app deploy grafana-public/dispatch.yaml --project $PROJECT_ID
