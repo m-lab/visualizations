@@ -33,4 +33,6 @@ steps:
   env:
   - PROJECT_IN=measurement-lab
   args:
+  - gcloud app operations wait $(gcloud app operations list --format="value(id)" --pending --limit=1) || true
   - gcloud app deploy grafana-public/dispatch.yaml --project $PROJECT_ID
+
