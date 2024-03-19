@@ -11,8 +11,8 @@ options:
 # production project where this build will happen is "measurement-lab", which
 # is a production project, so we want to use the "mlab-oti" (prod) image. The
 # value of this variable is defined in the build trigger of each project.
-#
-# Deploy public Grafana instance in AppEngine
+
+# Evaluate the app.yaml.template file
 steps:
 - name: us-central1-docker.pkg.dev/${_IMAGE_PROJECT}/build-images/gcloud-jsonnet-cbif:1.1
   entrypoint: /bin/bash
@@ -23,16 +23,18 @@ steps:
         -e 's|{{PROJECT_ID}}|${PROJECT_ID}|' \
         grafana-public/app.yaml.template > \
         grafana-public/app.yaml
+
+# Deploy public Grafana instance in AppEngine in sandbox and staging
 - name: us-central1-docker.pkg.dev/${_IMAGE_PROJECT}/build-images/gcloud-jsonnet-cbif:1.1
   env:
-  - PROJECT_IN=mlab-sandbox,mlab-staging,measurement-lab
+  - PROJECT_IN=mlab-sandbox,mlab-staging
   args:
   - gcloud app deploy grafana-public/app.yaml --project $PROJECT_ID
 
+# Deploy public Grafana instance in AppEngine in production
 - name: us-central1-docker.pkg.dev/${_IMAGE_PROJECT}/build-images/gcloud-jsonnet-cbif:1.1
   env:
   - PROJECT_IN=measurement-lab
   args:
-  - sleep 30 # Give all operations in previous step a few seconds to complete
-  - gcloud app deploy grafana-public/dispatch.yaml --project $PROJECT_ID
+  - gcloud app deploy grafana-public/app.yaml grafana-public/dispatch.yaml --project $PROJECT_ID
 
