@@ -1,0 +1,13 @@
+apiVersion: 1
+
+datasources:
+  - name: Google BigQuery (mlab-collaboration)
+    type: grafana-bigquery-datasource
+    access: proxy
+    isDefault: false
+    editable: false
+    enabled: true
+    uid: df3b499c-d71c-4203-8ecc-bee46fb25979
+    jsonData:
+      authenticationType: gce
+      defaultProject: mlab-collaboration
