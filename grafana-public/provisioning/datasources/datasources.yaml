@@ -11,3 +11,14 @@ datasources:
     jsonData:
       authenticationType: gce
       defaultProject: measurement-lab
+  - name: Google BigQuery (mlab-collaboration)
+    type: grafana-bigquery-datasource
+    access: proxy
+    isDefault: false
+    editable: false
+    enabled: true
+    uid: fake-20240114
+    jsonData:
+      authenticationType: gce
+      defaultProject: mlab-collaboration
+
