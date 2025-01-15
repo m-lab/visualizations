@@ -17,7 +17,7 @@ datasources:
     isDefault: false
     editable: false
     enabled: true
-    uid: fake-20240114
+    uid: P116E76923C5457A4
     jsonData:
       authenticationType: gce
       defaultProject: mlab-collaboration
