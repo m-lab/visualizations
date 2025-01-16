@@ -21,7 +21,7 @@
       }
     ]
   },
-  "description": "For all metros with 2 or more MLab sites, evaluate the quality of the interconnections between ISPs, by measuring differences in performance to MLab servers from each of the N largest Client ISPs.    If the score is poor it means that users attached to a some ISP get different performances to the different MLab servers, indicating poor connectivity between the ISPs.\nThe metrics are: KSdistance (0 is ideal), the worst case vertical distance between the cdf distributions; and spread (1 is ideal), the worst case ratio of the geometric means.\n\nWhen the spread is reported as 0, there is only one MLab site, and this analysis does not apply.",
+  "description": "For all metros with 2 or more MLab sites, evaluate the quality of the interconnections between ISPs, by measuring differences in performance to MLab servers from each of the N largest Client ISPs.    If the score is poor it means that users attached to a some ISP get different performances to the different MLab servers, indicating poor connectivity between the ISPs.\nThe metrics are: KSdistance (0 is ideal), the worst case vertical distance between the cdf distributions; and spread (1 is ideal), the worst case ratio of the geometric means.\n\nWhen the spread is reported as 0, there is only one MLab site, and this analysis does not apply.\n\nNB: This is a pre-release subject to change, including deletion, without notification.  It is not running on production infrastructure and may be unstable.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -64,7 +64,7 @@
             {
               "targetBlank": true,
               "title": "Detailed Plots",
-              "url": "${fullLink:raw}&var-site=${__data.fields.metro}﻿&var-rank=${rank:raw}&var-mode=pdf"
+              "url": "${detailURL:raw}&var-site=${__data.fields.metro}﻿&var-rank=${rank:raw}&var-mode=pdf"
             }
           ],
           "mappings": [],
@@ -182,7 +182,7 @@
             {
               "targetBlank": true,
               "title": "Show Plots",
-              "url": "${fullLink:raw}&var-site=${__data.fields.metro}﻿&var-rank=${rank:raw}&var-mode=pdf"
+              "url": "${detailURL:raw}&var-site=${__data.fields.metro}﻿&var-rank=${rank:raw}&var-mode=pdf"
             }
           ],
           "mappings": [],
@@ -301,7 +301,7 @@
             {
               "targetBlank": true,
               "title": "Show Plots",
-              "url": "${fullLink:raw}&var-site=${__data.fields.metro}﻿&var-rank=${rank:raw}&var-mode=pdf"
+              "url": "${detailURL:raw}&var-site=${__data.fields.metro}﻿&var-rank=${rank:raw}&var-mode=pdf"
             }
           ],
           "mappings": [],
@@ -523,22 +523,15 @@
       {
         "hide": 2,
         "name": "detailURL",
-        "query": "d/ae6im04fbf280b/de9f605d-3d53-582a-9837-8ae7498008b4?orgId=1",
-        "skipUrlSync": false,
-        "type": "constant"
-      },
-      {
-        "hide": 2,
-        "name": "fullLink",
-        "query": "https://grafana.mlab-sandbox.measurementlab.net/d/ae6im04fbf280b/de9f605d-3d53-582a-9837-8ae7498008b4?orgId=1",
+        "query": "/d/20250114a?orgId=1",
         "skipUrlSync": false,
         "type": "constant"
       },
       {
         "current": {
           "selected": false,
-          "text": "0 Summary between 2025-01-02 and 2025-01-08 for 5 ISPs",
-          "value": "0 Summary between 2025-01-02 and 2025-01-08 for 5 ISPs"
+          "text": "0 Summary between 2025-01-02 and 2025-01-08 for 1 ISPs",
+          "value": "0 Summary between 2025-01-02 and 2025-01-08 for 1 ISPs"
         },
         "datasource": {
           "type": "grafana-bigquery-datasource",
@@ -558,7 +551,7 @@
           "location": "",
           "project": "mlab-collaboration",
           "rawQuery": true,
-          "rawSql": "SELECT ISPname\n\nFROM `mlab-collaboration.mm_preproduction.cached_metro_report` ('MinRTT', '.', ${rank})\nLIMIT 1",
+          "rawSql": "SELECT ISPname\n\nFROM `mlab-collaboration.mm_preproduction.cached_metro_report` ('MinRTT', '.', 1)\nLIMIT 1",
           "refId": "tempvar",
           "sql": {
             "columns": [
@@ -596,6 +589,6 @@
   "timezone": "utc",
   "title": "Global Interconnection Report from cached data",
   "uid": "20250110a",
-  "version": 29,
+  "version": 31,
   "weekStart": ""
 }
