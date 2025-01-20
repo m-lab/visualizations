@@ -395,7 +395,7 @@
           "text": "Google BigQuery (mlab-collaboration)",
           "value": "P116E76923C5457A4"
         },
-        "hide": 1,
+        "hide": 2,
         "includeAll": false,
         "multi": false,
         "name": "datasource",
@@ -420,7 +420,7 @@
           "text": "Platform Cluster (mlab-oti)",
           "value": "WW1Jk2sGk"
         },
-        "hide": 1,
+        "hide": 2,
         "includeAll": false,
         "multi": false,
         "name": "prometheus",
@@ -444,33 +444,54 @@
           ]
         },
         "datasource": {
-          "type": "prometheus",
-          "uid": "${prometheus}"
+          "type": "grafana-bigquery-datasource",
+          "uid": "P116E76923C5457A4"
         },
-        "definition": "label_values(ndt_test_rate_mbps_count,machine)",
-        "description": "Metro based site picker, so we can capture all auto join sites.   NB: There is not mechanism to exclude problematic sites.",
-        "hide": 0,
+        "definition": "",
+        "description": "Metro based site picker, so we can capture all auto join sites. ",
+        "hide": 2,
         "includeAll": true,
-        "label": "Chart Metros",
+        "label": "MLab Metros",
         "multi": true,
         "name": "ChartMetros",
         "options": [],
         "query": {
-          "qryType": 1,
-          "query": "label_values(ndt_test_rate_mbps_count,machine)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+          "editorMode": "code",
+          "format": 1,
+          "location": "",
+          "project": "mlab-collaboration",
+          "rawQuery": true,
+          "rawSql": "# From: 2024-12-20 Prototype cached site picker  \n\nSELECT\n  CONCAT(metro, ' ', ContinentCode, ' ', City, ', ', CountryCode) AS text,\n  metro AS value,\nFROM (\n  SELECT\n    REGEXP_EXTRACT(site, '^([a-z]{3})') AS metro,\n    ANY_VALUE(ContinentCode) AS ContinentCode,\n    ANY_VALUE(City) AS City,\n    ANY_VALUE(CountryCode) AS CountryCode,\n  FROM `${dataset}.cached_metadata` GROUP BY metro ORDER BY  ContinentCode, CountryCode, metro\n)\n",
+          "refId": "tempvar",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         },
         "refresh": 1,
-        "regex": "/mlab[1-4].([a-z]{3}).*/",
+        "regex": "",
         "skipUrlSync": false,
-        "sort": 1,
+        "sort": 0,
         "type": "query"
       },
       {
         "current": {
-          "selected": false,
-          "text": "5",
-          "value": "5"
+          "selected": true,
+          "text": "2",
+          "value": "2"
         },
         "description": "Number of ISPs to include - TODO rename the variable",
         "hide": 0,
@@ -490,12 +511,12 @@
             "value": "1"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "2",
             "value": "2"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "5",
             "value": "5"
           },
@@ -589,6 +610,6 @@
   "timezone": "utc",
   "title": "Global Interconnection Report from cached data",
   "uid": "20250110a",
-  "version": 31,
+  "version": 33,
   "weekStart": ""
 }

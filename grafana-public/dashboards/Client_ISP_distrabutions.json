@@ -550,7 +550,7 @@
       },
       "id": 32,
       "panels": [],
-      "title": "Summary Statistics",
+      "title": "Client ISP Summary Statistics",
       "type": "row"
     },
     {
@@ -1491,7 +1491,7 @@
           "text": "Google BigQuery (mlab-collaboration)",
           "value": "P116E76923C5457A4"
         },
-        "hide": 1,
+        "hide": 2,
         "includeAll": false,
         "multi": false,
         "name": "datasource",
@@ -1580,11 +1580,6 @@
         "options": [
           {
             "selected": false,
-            "text": "0",
-            "value": "0"
-          },
-          {
-            "selected": false,
             "text": "1",
             "value": "1"
           },
@@ -1614,7 +1609,7 @@
             "value": "50"
           }
         ],
-        "query": "0,1,2,5,10,20,50",
+        "query": "1,2,5,10,20,50",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
@@ -1718,6 +1713,6 @@
   "timezone": "utc",
   "title": "Client ISP Distributions from cached histograms",
   "uid": "20250114a",
-  "version": 8,
+  "version": 9,
   "weekStart": ""
 }
