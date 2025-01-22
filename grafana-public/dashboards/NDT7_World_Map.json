@@ -207,11 +207,14 @@
     ]
   },
   "time": {
-    "from": "now-7d",
-    "to": "now"
+    "from": "now-3d",
+    "to": "now-3d"
   },
-  "timepicker": {},
-  "timezone": "",
+  "timepicker": {
+    "hidden": true,
+    "nowDelay": ""
+  },
+  "timezone": "utc",
   "title": "NDT7 World Map",
   "uid": "1",
   "version": 13,
