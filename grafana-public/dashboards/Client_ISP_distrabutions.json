@@ -252,8 +252,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0033750798390114966,
-              0.06412651694121842
+              -0.0034416676444131563,
+              0.06539168524384997
             ],
             "type": "linear"
           }
@@ -366,8 +366,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.001998921634381452,
-              0.03797951105324759
+              -0.002167333197366982,
+              0.04117933074997266
             ],
             "type": "linear"
           }
@@ -480,8 +480,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0006443183189195989,
-              0.012242048059472377
+              -0.0010364842454394694,
+              0.019693200663349914
             ],
             "type": "linear"
           }
@@ -600,8 +600,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.005430305475698122,
-              0.10317580403826432
+              -0.003998274419190236,
+              0.07596721396461448
             ],
             "type": "linear"
           }
@@ -714,8 +714,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.008158659783800285,
-              0.15501453589220543
+              -0.007971726520650415,
+              0.15146280389235792
             ],
             "type": "linear"
           }
@@ -828,8 +828,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0020770001623531126,
-              0.03946300308470914
+              -0.002096785237743615,
+              0.03983891951712868
             ],
             "type": "linear"
           }
@@ -942,8 +942,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0007869805551790098,
-              0.014952630548401187
+              -0.0007222435037987614,
+              0.013722626572176468
             ],
             "type": "linear"
           }
@@ -1071,8 +1071,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.003339320368305876,
-              0.06344708699781164
+              -0.004232804232804233,
+              0.08042328042328042
             ],
             "type": "linear"
           }
@@ -1185,8 +1185,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.018198908149434985,
-              0.34577925483926464
+              -0.019445736233831105,
+              0.36946898844279097
             ],
             "type": "linear"
           }
@@ -1299,8 +1299,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.002914259098405026,
-              0.055370922869695485
+              -0.003174603174603174,
+              0.06031746031746032
             ],
             "type": "linear"
           }
@@ -1413,8 +1413,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0007152308407538534,
-              0.013589385974323211
+              -0.0020576131687242796,
+              0.03909465020576131
             ],
             "type": "linear"
           }
@@ -1499,7 +1499,7 @@
         "query": "grafana-bigquery-datasource",
         "queryValue": "",
         "refresh": 1,
-        "regex": "/(mlab-oti|mlab-staging|mlab-sandbox|mlab-collaboration)/",
+        "regex": "/mlab-collaboration/",
         "skipUrlSync": false,
         "type": "datasource"
       },
@@ -1513,7 +1513,7 @@
       {
         "allValue": ".*",
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "gru SA Sao Paulo, BR"
           ],
@@ -1559,7 +1559,7 @@
             "limit": 50
           }
         },
-        "refresh": 2,
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
@@ -1568,8 +1568,8 @@
       {
         "current": {
           "selected": false,
-          "text": "5",
-          "value": "5"
+          "text": "2",
+          "value": "2"
         },
         "description": "Number of ISPs to include - TODO rename the variable",
         "hide": 0,
@@ -1584,12 +1584,12 @@
             "value": "1"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "2",
             "value": "2"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "5",
             "value": "5"
           },
@@ -1713,6 +1713,6 @@
   "timezone": "utc",
   "title": "Client ISP Distributions from cached histograms",
   "uid": "20250114a",
-  "version": 9,
+  "version": 11,
   "weekStart": ""
 }
