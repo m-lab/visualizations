@@ -34,182 +34,6 @@
         "type": "grafana-bigquery-datasource",
         "uid": "P116E76923C5457A4"
       },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "rank"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 45
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "name"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 261
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "tests"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 71
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Percent"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 67
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "metro"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 55
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Pct"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 35
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "ISPrank"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 70
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 0
-      },
-      "id": 24,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "11.1.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
-          },
-          "editorMode": "code",
-          "format": 1,
-          "location": "",
-          "project": "mlab-oti",
-          "rawQuery": true,
-          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    metro,\n    ISPrank, \n    SUM(hist) AS tests,\n    SUM(hist) * 100.0 / ANY_VALUE(metroTests) AS Pct,\n    ISPname,\n  FROM (\n    SELECT *,\n    FROM `${dataset}.access_ndt7_cached_histograms`(\"MinRTT\", \"gru.*\", 5)\n  )\n  GROUP BY metro, ISPrank, ISPname\n  ORDER BY ISPrank, metro\n)\n\nSELECT * FROM ISPdata\n",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
-        }
-      ],
-      "title": "Summary Statistics for top $rank ISPs",
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "grafana-bigquery-datasource",
-        "uid": "P116E76923C5457A4"
-      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -248,8 +72,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -264,7 +87,7 @@
         "h": 9,
         "w": 23,
         "x": 0,
-        "y": 8
+        "y": 0
       },
       "id": 21,
       "options": {
@@ -299,7 +122,7 @@
           "location": "",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "SELECT metro,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\nFROM `mlab-collaboration.mm_preproduction.cached_metro_report`(\"MinRTT\", \"${ChartMetros:regex}\", ${rank})\nWHERE level = 'Metro'\n",
+          "rawSql": "SELECT metro,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\nFROM `${dataset}.cached_metro_report`(\"MinRTT\", \"${ChartMetros:regex}\", ${rank})\nWHERE level = 'Metro'\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -366,8 +189,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -382,7 +204,7 @@
         "h": 9,
         "w": 23,
         "x": 0,
-        "y": 17
+        "y": 9
       },
       "id": 22,
       "options": {
@@ -417,7 +239,7 @@
           "location": "",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "\nSELECT metro,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\nFROM `mlab-collaboration.mm_preproduction.cached_metro_report`(\"MeanThroughputMbps\", \"${ChartMetros:regex}\", ${rank})\nWHERE level = 'Metro'\n",
+          "rawSql": "\nSELECT metro,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\nFROM `${dataset}.cached_metro_report`(\"MeanThroughputMbps\", \"${ChartMetros:regex}\", ${rank})\nWHERE level = 'Metro'\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -485,8 +307,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -501,7 +322,7 @@
         "h": 9,
         "w": 23,
         "x": 0,
-        "y": 26
+        "y": 18
       },
       "id": 23,
       "options": {
@@ -536,7 +357,7 @@
           "location": "",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "\nSELECT metro,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\nFROM `mlab-collaboration.mm_preproduction.cached_metro_report`(\"LossRate\", \"${ChartMetros:regex}\", ${rank})\nWHERE level = 'Metro'\n",
+          "rawSql": "\nSELECT metro,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\nFROM `${dataset}.cached_metro_report`(\"LossRate\", \"${ChartMetros:regex}\", ${rank})\nWHERE level = 'Metro'\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -566,14 +387,6 @@
   "templating": {
     "list": [
       {
-        "description": "Prevent automatic project selection",
-        "hide": 2,
-        "name": "project",
-        "query": "mlab-collaboration",
-        "skipUrlSync": false,
-        "type": "constant"
-      },
-      {
         "current": {
           "selected": false,
           "text": "Google BigQuery (mlab-collaboration)",
@@ -587,7 +400,7 @@
         "query": "grafana-bigquery-datasource",
         "queryValue": "",
         "refresh": 1,
-        "regex": "/mlab-collaboration/",
+        "regex": "/(mlab-oti|mlab-staging|mlab-sandbox|mlab-collaboration)/",
         "skipUrlSync": false,
         "type": "datasource"
       },
@@ -597,6 +410,24 @@
         "query": "mlab-collaboration.mm_preproduction",
         "skipUrlSync": false,
         "type": "constant"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "Platform Cluster (mlab-oti)",
+          "value": "WW1Jk2sGk"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "prometheus",
+        "options": [],
+        "query": "prometheus",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "/Platform Cluster/",
+        "skipUrlSync": false,
+        "type": "datasource"
       },
       {
         "allValue": ".*",
@@ -776,6 +607,6 @@
   "timezone": "utc",
   "title": "Global Interconnection Report from cached data",
   "uid": "20250110a",
-  "version": 39,
+  "version": 41,
   "weekStart": ""
 }
