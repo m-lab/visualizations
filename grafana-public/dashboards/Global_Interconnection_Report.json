@@ -72,8 +72,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -190,8 +189,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -309,8 +307,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -390,6 +387,14 @@
   "templating": {
     "list": [
       {
+        "description": "Prevent automatic project selection",
+        "hide": 2,
+        "name": "project",
+        "query": "mlab-collaboration",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
         "current": {
           "selected": false,
           "text": "Google BigQuery (mlab-collaboration)",
@@ -413,24 +418,6 @@
         "query": "mlab-collaboration.mm_preproduction",
         "skipUrlSync": false,
         "type": "constant"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": "Platform Cluster (mlab-oti)",
-          "value": "WW1Jk2sGk"
-        },
-        "hide": 2,
-        "includeAll": false,
-        "multi": false,
-        "name": "prometheus",
-        "options": [],
-        "query": "prometheus",
-        "queryValue": "",
-        "refresh": 1,
-        "regex": "/Platform Cluster/",
-        "skipUrlSync": false,
-        "type": "datasource"
       },
       {
         "allValue": ".*",
@@ -610,6 +597,6 @@
   "timezone": "utc",
   "title": "Global Interconnection Report from cached data",
   "uid": "20250110a",
-  "version": 35,
+  "version": 37,
   "weekStart": ""
 }
