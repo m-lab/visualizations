@@ -21,7 +21,7 @@
       }
     ]
   },
-  "description": "For all metros with 2 or more MLab sites, evaluate the quality of the interconnections between ISPs, by measuring differences in performance to MLab servers from each of the N largest Client ISPs.    If the score is poor it means that users attached to a some ISP get different performances to the different MLab servers, indicating poor connectivity between the ISPs.\nThe metrics are: KSdistance (0 is ideal), the worst case vertical distance between the cdf distributions; and spread (1 is ideal), the worst case ratio of the geometric means.\n\nWhen the spread is reported as 0, there is only one MLab site, and this analysis does not apply.\n\nNB: This is a pre-release subject to change, including deletion, without notification.  It is not running on production infrastructure and may be unstable.",
+  "description": "**NB: This is a pre-release subject to change, including deletion, without notification.  It is not running on production infrastructure and may be unstable.**\n\nFor all metros with 2 or more MLab sites, evaluate the quality of the interconnections between ISPs, by measuring differences in performance to MLab servers from each of the N largest Client ISPs.    If the score is poor it means that users attached to a some ISP get different performances to the different MLab servers, indicating poor connectivity between the ISPs.\nThe metrics are: KSdistance (0 is ideal), the worst case vertical distance between the cdf distributions; and spread (1 is ideal), the worst case ratio of the geometric means.\n\nWhen the spread is reported as 0, there is only one MLab site, and this analysis does not apply.\nFor more information see the [https://docs.google.com/presentation/d/1wpx45K30QD2ZIDuS5WsuRGrbcCrxs56cvuhydWRIRiw/edit?usp=sharing][slides].",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -72,7 +72,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -122,7 +123,7 @@
           "location": "",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "SELECT metro,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\nFROM `${dataset}.cached_metro_report`(\"MinRTT\", \"${ChartMetros:regex}\", ${rank})\nWHERE level = 'Metro'\n",
+          "rawSql": "SELECT metro,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\nFROM `${dataset}.cached_metro_report`(\"MinRTT\", \"${ChartMetros:regex}\", ${rank})\nWHERE level like 'Metro%%'\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -189,7 +190,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -239,7 +241,7 @@
           "location": "",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "\nSELECT metro,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\nFROM `${dataset}.cached_metro_report`(\"MeanThroughputMbps\", \"${ChartMetros:regex}\", ${rank})\nWHERE level = 'Metro'\n",
+          "rawSql": "\nSELECT metro,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\nFROM `${dataset}.cached_metro_report`(\"MeanThroughputMbps\", \"${ChartMetros:regex}\", ${rank})\nWHERE level like 'Metro%%'\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -307,7 +309,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -357,7 +360,7 @@
           "location": "",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "\nSELECT metro,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\nFROM `${dataset}.cached_metro_report`(\"LossRate\", \"${ChartMetros:regex}\", ${rank})\nWHERE level = 'Metro'\n",
+          "rawSql": "\nSELECT metro,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\nFROM `${dataset}.cached_metro_report`(\"LossRate\", \"${ChartMetros:regex}\", ${rank})\nWHERE level like 'Metro%%'\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -548,8 +551,8 @@
       {
         "current": {
           "selected": false,
-          "text": "0 Summary between 2025-01-18 and 2025-01-24",
-          "value": "0 Summary between 2025-01-18 and 2025-01-24"
+          "text": "0 2025-01-18 - 2025-01-24",
+          "value": "0 2025-01-18 - 2025-01-24"
         },
         "datasource": {
           "type": "grafana-bigquery-datasource",
@@ -607,6 +610,6 @@
   "timezone": "utc",
   "title": "Global Interconnection Report from cached data",
   "uid": "20250110a",
-  "version": 41,
+  "version": 43,
   "weekStart": ""
 }
