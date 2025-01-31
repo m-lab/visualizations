@@ -146,6 +146,18 @@
                 "value": 70
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "percent"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 62
+              }
+            ]
           }
         ]
       },
@@ -181,7 +193,7 @@
           "location": "",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    metro,\n    ISPrank, \n    SUM(hist) AS tests,\n    SUM(hist) * 100.0 / ANY_VALUE(metroTests) AS Pct,\n    ISPname,\n  FROM (\n    SELECT *,\n    FROM `${dataset}.access_ndt7_cached_histograms`(\"MinRTT\", \"${site:regex}\", ${rank})\n  )\n  GROUP BY metro, ISPrank, ISPname\n  ORDER BY ISPrank, metro\n)\n\nSELECT * FROM ISPdata\n",
+          "rawSql": "SELECT *\nFROM (\n  SELECT metro, ISPrank, tests, percent,\n  CONCAT(REGEXP_REPLACE(ISPname, '^0 ', \"\"), \" summary\")AS ISPname,\n  FROM `${dataset}.cached_metro_report`(\"MinRTT\", \"${site:regex}\", ${rank})\n  WHERE level like \"Metro%%\"  \n    UNION ALL\n  SELECT metro, ISPrank, tests, percent, ISPname\n  FROM `${dataset}.cached_metro_report`(\"MinRTT\", \"${site:regex}\", ${rank})\n  WHERE level like \"ISP%%\" \n)  ORDER BY ISPrank",
           "refId": "A",
           "sql": {
             "columns": [
@@ -202,7 +214,7 @@
           }
         }
       ],
-      "title": "Summary Statistics for top $rank ISPs",
+      "title": "Summary Statistics for the top $rank ISPs",
       "type": "table"
     },
     {
@@ -276,7 +288,7 @@
           "orderBySort": "1",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "WITH\ndata  AS (\n  SELECT\n    bin,\n    SUM(hist) as hist,\n    siteName\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MinRTT\",  \"${site:regex}\", 900)\n  GROUP BY bin, siteName\n)\n\nSELECT\n  bin,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n    WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n    ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n  END AS data,\n  siteName,\nFROM data\nORDER BY bin",
+          "rawSql": "WITH\ndata  AS (\n  SELECT\n    bin,\n    SUM(hist) as hist,\n    siteName\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MinRTT\",  \"${site:regex}\", 900)\n  GROUP BY bin, siteName\n)\n\nSELECT\n  bin,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n    WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n    ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n  END AS data,\n  FORMAT(\"%t (%t tests)\",siteName,  SUM(hist) OVER (partition by siteName)) AS siteName\nFROM data\nORDER BY bin",
           "refId": "A",
           "select": [
             [
@@ -390,7 +402,7 @@
           "orderBySort": "1",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "WITH\ndata  AS (\n  SELECT\n    bin,\n    SUM(hist) as hist,\n    siteName\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MeanThroughputMbps\",  \"${site:regex}\", 900)\n  GROUP BY bin, siteName\n)\n\nSELECT\n  bin,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n    WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n    ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n  END AS data,\n  siteName,\nFROM data\nORDER BY bin\n",
+          "rawSql": "WITH\ndata  AS (\n  SELECT\n    bin,\n    SUM(hist) as hist,\n    siteName\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MeanThroughputMbps\",  \"${site:regex}\", 900)\n  GROUP BY bin, siteName\n)\n\nSELECT\n  bin,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n    WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n    ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n  END AS data,\n  FORMAT(\"%t (%t tests)\",siteName,  SUM(hist) OVER (partition by siteName)) AS siteName,\nFROM data\nORDER BY bin\n",
           "refId": "A",
           "select": [
             [
@@ -504,7 +516,7 @@
           "orderBySort": "1",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "\nWITH\ndata  AS (\n  SELECT\n    bin,\n    SUM(hist) as hist,\n    siteName\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"LossRate\",  \"${site:regex}\", 900)\n  GROUP BY bin, siteName\n)\n\nSELECT\n  bin,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n    WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n    ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n  END AS data,\n  siteName,\nFROM data\nORDER BY bin\n",
+          "rawSql": "\nWITH\ndata  AS (\n  SELECT\n    bin,\n    SUM(hist) as hist,\n    siteName\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"LossRate\",  \"${site:regex}\", 900)\n  GROUP BY bin, siteName\n)\n\nSELECT\n  bin,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n    WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n    ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n  END AS data,\n   FORMAT(\"%t (%t tests)\",siteName,  SUM(hist) OVER (partition by siteName)) AS siteName,\nFROM data\nORDER BY bin\n",
           "refId": "A",
           "select": [
             [
@@ -600,14 +612,14 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.003998274419190236,
-              0.07596721396461448
+              -0.005420388557140271,
+              0.10298738258566517
             ],
             "type": "linear"
           }
         },
         "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
-        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
       },
       "targets": [
         {
@@ -624,7 +636,7 @@
           "orderBySort": "1",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    linBin,\n    SUM(hist) AS hist,\n    ISPname,\n  FROM `${dataset}.access_ndt7_cached_histograms`('linearMinRTT', \"${site:regex}\", ${rank})\n  GROUP BY ISPname, linBin\n)\n\nSELECT linBin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by ISPname)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by ISPname)\n      ELSE SUM(hist) OVER (PARTITION BY ISPname ORDER BY linBin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by ISPname)\n    END AS data,\n    ISPname,\n  FROM ISPdata\n  ORDER BY linBin",
+          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    linBin,\n    SUM(hist) AS hist,\n    ISPname,\n    ISPrank\n  FROM `${dataset}.access_ndt7_cached_histograms`('linearMinRTT', \"${site:regex}\", ${rank})\n  GROUP BY ISPname, ISPrank, linBin\n)\n\nSELECT linBin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by ISPname)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by ISPname)\n      ELSE SUM(hist) OVER (PARTITION BY ISPname ORDER BY linBin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by ISPname)\n    END AS data,\n    ISPname,\n  FROM ISPdata\n  ORDER BY ISPrank, linBin\n  ",
           "refId": "A",
           "select": [
             [
@@ -721,7 +733,7 @@
           }
         },
         "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
-        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
       },
       "targets": [
         {
@@ -738,7 +750,7 @@
           "orderBySort": "1",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    bin,\n    SUM(hist) AS hist,\n    ISPname,\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MinRTT\", \"${site:regex}\", ${rank})\n  GROUP BY ISPname, bin\n)\n\nSELECT bin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by ISPname)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by ISPname)\n      ELSE SUM(hist) OVER (PARTITION BY ISPname ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by ISPname)\n    END AS data,\n    ISPname,\n  FROM ISPdata\n  ORDER BY bin",
+          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    bin,\n    SUM(hist) AS hist,\n    ISPname,\n    ISPrank,\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MinRTT\", \"${site:regex}\", ${rank})\n  GROUP BY ISPname, ISPrank, bin\n)\n\nSELECT bin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by ISPname)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by ISPname)\n      ELSE SUM(hist) OVER (PARTITION BY ISPname ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by ISPname)\n    END AS data,\n    ISPname,\n  FROM ISPdata\n  ORDER BY ISPrank, bin",
           "refId": "A",
           "select": [
             [
@@ -828,14 +840,14 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.002096785237743615,
-              0.03983891951712868
+              -0.0022186067149829905,
+              0.04215352758467682
             ],
             "type": "linear"
           }
         },
         "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
-        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
       },
       "targets": [
         {
@@ -852,7 +864,7 @@
           "orderBySort": "1",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    bin,\n    SUM(hist) AS hist,\n    ISPname,\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MeanThroughputMbps\", \"${site:regex}\", ${rank})\n  GROUP BY ISPname, bin\n  \n)\n\nSELECT bin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by ISPname)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by ISPname)\n      ELSE SUM(hist) OVER (PARTITION BY ISPname ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by ISPname)\n    END AS data,\n    ISPname,\n  FROM ISPdata\n  ORDER BY bin",
+          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    bin,\n    SUM(hist) AS hist,\n    ISPname,\n    ISPrank,\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MeanThroughputMbps\", \"${site:regex}\", ${rank})\n  GROUP BY ISPname, ISPrank, bin\n  \n)\n\nSELECT bin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by ISPname)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by ISPname)\n      ELSE SUM(hist) OVER (PARTITION BY ISPname ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by ISPname)\n    END AS data,\n    ISPname,\n  FROM ISPdata\n  ORDER BY ISPrank, bin",
           "refId": "A",
           "select": [
             [
@@ -942,14 +954,14 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0007222435037987614,
-              0.013722626572176468
+              -0.0007679652923363614,
+              0.014591340554390868
             ],
             "type": "linear"
           }
         },
         "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
-        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
       },
       "targets": [
         {
@@ -966,7 +978,7 @@
           "orderBySort": "1",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    bin,\n    SUM(hist) AS hist,\n    ISPname,\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"LossRate\", \"${site:regex}\", ${rank})\n  GROUP BY ISPname, bin\n)\n\nSELECT bin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by ISPname)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by ISPname)\n      ELSE SUM(hist) OVER (PARTITION BY ISPname ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by ISPname)\n    END AS data,\n    ISPname,\n  FROM ISPdata\n  ORDER BY bin",
+          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    bin,\n    SUM(hist) AS hist,\n    ISPname,\n    ISPrank,\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"LossRate\", \"${site:regex}\", ${rank})\n  GROUP BY ISPname, ISPrank, bin\n)\n\nSELECT bin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by ISPname)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by ISPname)\n      ELSE SUM(hist) OVER (PARTITION BY ISPname ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by ISPname)\n    END AS data,\n    ISPname,\n  FROM ISPdata\n  ORDER BY ISPrank, bin",
           "refId": "A",
           "select": [
             [
@@ -1514,12 +1526,8 @@
         "allValue": ".*",
         "current": {
           "selected": false,
-          "text": [
-            "gru SA Sao Paulo, BR"
-          ],
-          "value": [
-            "gru"
-          ]
+          "text": "gru SA Sao Paulo, BR",
+          "value": "gru"
         },
         "datasource": {
           "type": "grafana-bigquery-datasource",
@@ -1530,7 +1538,7 @@
         "hide": 0,
         "includeAll": false,
         "label": "MLab metros",
-        "multi": true,
+        "multi": false,
         "name": "site",
         "options": [],
         "query": {
@@ -1568,8 +1576,8 @@
       {
         "current": {
           "selected": false,
-          "text": "2",
-          "value": "2"
+          "text": "5",
+          "value": "5"
         },
         "description": "Number of ISPs to include - TODO rename the variable",
         "hide": 0,
@@ -1584,12 +1592,12 @@
             "value": "1"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "2",
             "value": "2"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "5",
             "value": "5"
           },
@@ -1713,6 +1721,6 @@
   "timezone": "utc",
   "title": "Client ISP Distributions from cached histograms",
   "uid": "20250114a",
-  "version": 11,
+  "version": 13,
   "weekStart": ""
 }
