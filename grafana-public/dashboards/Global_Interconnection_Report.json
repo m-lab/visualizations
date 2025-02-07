@@ -551,8 +551,8 @@
       {
         "current": {
           "selected": false,
-          "text": "0 2025-01-18 - 2025-01-24",
-          "value": "0 2025-01-18 - 2025-01-24"
+          "text": "0 2025-01-26 - 2025-02-01 Cached",
+          "value": "0 2025-01-26 - 2025-02-01 Cached"
         },
         "datasource": {
           "type": "grafana-bigquery-datasource",
@@ -608,8 +608,8 @@
     "hidden": true
   },
   "timezone": "utc",
-  "title": "Global Interconnection Report from cached data",
+  "title": "Global Metro Dashboard (using cached data)",
   "uid": "20250110a",
-  "version": 43,
+  "version": 44,
   "weekStart": ""
 }
