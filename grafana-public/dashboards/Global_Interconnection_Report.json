@@ -64,7 +64,7 @@
             {
               "targetBlank": true,
               "title": "Detailed Plots",
-              "url": "${detailURL:raw}&var-site=${__data.fields.metro}﻿&var-rank=${rank:raw}&var-mode=pdf"
+              "url": "${detailURL:raw}&var-site=${__data.fields.metro}﻿&var-rank=${ISPcount:raw}&var-mode=pdf"
             }
           ],
           "mappings": [],
@@ -123,7 +123,7 @@
           "location": "",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "SELECT metro,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\nFROM `${dataset}.cached_metro_report`(\"MinRTT\", \"${ChartMetros:regex}\", ${rank})\nWHERE level like 'Metro%%'\n",
+          "rawSql": "SELECT\n  name,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\n  Continent,\n  metro,\nFROM `${dataset}.cached_metro_report`(\"MinRTT\", \"${ChartMetros:regex}\", ${ISPcount})\n  JOIN (\n    SELECT\n      REGEXP_EXTRACT(site, '^([a-z]{3})') AS metro,\n      ANY_VALUE(FORMAT('%t %t (%t)', City, CountryCode,  REGEXP_EXTRACT(site, '^([a-z]{3})'))) AS name,\n      ANY_VALUE(ContinentCode) AS Continent,\n      ANY_VALUE(FORMAT('%t %t %t', ContinentCode, CountryCode , City )) AS sortKey, \n    FROM `${dataset}.cached_metadata`\n    GROUP BY metro\n  ) USING (metro)\nWHERE level like 'Metro%%'\n  AND (\"${verbose}\" = 'yes' OR Sites != '1')\nORDER BY sortKey\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -182,7 +182,7 @@
             {
               "targetBlank": true,
               "title": "Show Plots",
-              "url": "${detailURL:raw}&var-site=${__data.fields.metro}﻿&var-rank=${rank:raw}&var-mode=pdf"
+              "url": "${detailURL:raw}&var-site=${__data.fields.metro}﻿&var-rank=${ISPcount:raw}&var-mode=pdf"
             }
           ],
           "mappings": [],
@@ -241,7 +241,7 @@
           "location": "",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "\nSELECT metro,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\nFROM `${dataset}.cached_metro_report`(\"MeanThroughputMbps\", \"${ChartMetros:regex}\", ${rank})\nWHERE level like 'Metro%%'\n",
+          "rawSql": "SELECT\n  name,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\n  Continent,\n  metro,\nFROM `${dataset}.cached_metro_report`(\"MeanThroughputMbps\", \"${ChartMetros:regex}\", ${ISPcount})\n  JOIN (\n    SELECT\n      REGEXP_EXTRACT(site, '^([a-z]{3})') AS metro,\n      ANY_VALUE(FORMAT('%t %t (%t)', City, CountryCode,  REGEXP_EXTRACT(site, '^([a-z]{3})'))) AS name,\n      ANY_VALUE(ContinentCode) AS Continent,\n      ANY_VALUE(FORMAT('%t %t %t', ContinentCode, CountryCode , City )) AS sortKey, \n    FROM `${dataset}.cached_metadata`\n    GROUP BY metro\n  ) USING (metro)\nWHERE level like 'Metro%%'\n  AND (\"${verbose}\" = 'yes' OR Sites != '1')\nORDER BY sortKey\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -301,7 +301,7 @@
             {
               "targetBlank": true,
               "title": "Show Plots",
-              "url": "${detailURL:raw}&var-site=${__data.fields.metro}﻿&var-rank=${rank:raw}&var-mode=pdf"
+              "url": "${detailURL:raw}&var-site=${__data.fields.metro}﻿&var-rank=${ISPcount:raw}&var-mode=pdf"
             }
           ],
           "mappings": [],
@@ -360,7 +360,7 @@
           "location": "",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "\nSELECT metro,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\nFROM `${dataset}.cached_metro_report`(\"LossRate\", \"${ChartMetros:regex}\", ${rank})\nWHERE level like 'Metro%%'\n",
+          "rawSql": "SELECT\n  name,\n  KSdistance*10 AS scaledKSdistance,\n  IF (Sites != '1', spread, 0) AS Spread,\n  Continent,\n  metro,\nFROM `${dataset}.cached_metro_report`(\"LossRate\", \"${ChartMetros:regex}\", ${ISPcount})\n  JOIN (\n    SELECT\n      REGEXP_EXTRACT(site, '^([a-z]{3})') AS metro,\n      ANY_VALUE(FORMAT('%t %t (%t)', City, CountryCode,  REGEXP_EXTRACT(site, '^([a-z]{3})'))) AS name,\n      ANY_VALUE(ContinentCode) AS Continent,\n      ANY_VALUE(FORMAT('%t %t %t', ContinentCode, CountryCode , City )) AS sortKey, \n    FROM `${dataset}.cached_metadata`\n    GROUP BY metro\n  ) USING (metro)\nWHERE level like 'Metro%%'\n  AND (\"${verbose}\" = 'yes' OR Sites != '1')\nORDER BY sortKey\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -435,7 +435,7 @@
       {
         "allValue": ".*",
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "All"
           ],
@@ -489,31 +489,31 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "2",
           "value": "2"
         },
-        "description": "Number of ISPs to include - TODO rename the variable",
+        "description": "Number of ISPs to include",
         "hide": 0,
         "includeAll": false,
         "label": "Client ISPs",
         "multi": false,
-        "name": "rank",
+        "name": "ISPcount",
         "options": [
-          {
-            "selected": false,
-            "text": "0",
-            "value": "0"
-          },
-          {
-            "selected": false,
-            "text": "1",
-            "value": "1"
-          },
           {
             "selected": true,
             "text": "2",
             "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
           },
           {
             "selected": false,
@@ -536,7 +536,35 @@
             "value": "50"
           }
         ],
-        "query": "0,1,2,5,10,20,50",
+        "query": "2,3,4,5,10,20,50",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "no",
+          "value": "no"
+        },
+        "description": "Show metros with only 1 site.  This algorithm does not work for these metros.",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "verbose",
+        "options": [
+          {
+            "selected": true,
+            "text": "no",
+            "value": "no"
+          },
+          {
+            "selected": false,
+            "text": "yes",
+            "value": "yes"
+          }
+        ],
+        "query": "no, yes",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
@@ -551,8 +579,8 @@
       {
         "current": {
           "selected": false,
-          "text": "0 2025-01-26 - 2025-02-01 Cached",
-          "value": "0 2025-01-26 - 2025-02-01 Cached"
+          "text": "0 2025-02-06 - 2025-02-12 Cached",
+          "value": "0 2025-02-06 - 2025-02-12 Cached"
         },
         "datasource": {
           "type": "grafana-bigquery-datasource",
@@ -610,6 +638,6 @@
   "timezone": "utc",
   "title": "Global Metro Dashboard (using cached data)",
   "uid": "20250110a",
-  "version": 44,
+  "version": 48,
   "weekStart": ""
 }
