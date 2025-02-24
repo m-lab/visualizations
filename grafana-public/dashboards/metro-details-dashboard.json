@@ -69,7 +69,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "P116E76923C5457A4"
+        "uid": "${datasource}"
       },
       "description": "",
       "fieldConfig": {
@@ -223,7 +223,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 1,
@@ -257,7 +257,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "P116E76923C5457A4"
+        "uid": "${datasource}"
       },
       "gridPos": {
         "h": 9,
@@ -312,7 +312,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 0,
@@ -346,7 +346,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "P116E76923C5457A4"
+        "uid": "${datasource}"
       },
       "gridPos": {
         "h": 9,
@@ -401,7 +401,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 0,
@@ -435,7 +435,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "P116E76923C5457A4"
+        "uid": "${datasource}"
       },
       "description": "",
       "gridPos": {
@@ -492,7 +492,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 0,
@@ -549,7 +549,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "P116E76923C5457A4"
+        "uid": "${datasource}"
       },
       "description": "",
       "gridPos": {
@@ -606,7 +606,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 0,
@@ -663,7 +663,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "P116E76923C5457A4"
+        "uid": "${datasource}"
       },
       "description": "",
       "gridPos": {
@@ -720,7 +720,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 0,
@@ -777,7 +777,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "P116E76923C5457A4"
+        "uid": "${datasource}"
       },
       "description": "",
       "gridPos": {
@@ -834,7 +834,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 0,
@@ -891,7 +891,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "P116E76923C5457A4"
+        "uid": "${datasource}"
       },
       "description": "",
       "gridPos": {
@@ -948,7 +948,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 0,
@@ -1005,7 +1005,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "P116E76923C5457A4"
+        "uid": "${datasource}"
       },
       "description": "",
       "gridPos": {
@@ -1062,7 +1062,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 0,
@@ -1134,7 +1134,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "P116E76923C5457A4"
+        "uid": "${datasource}"
       },
       "description": "",
       "gridPos": {
@@ -1191,7 +1191,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 0,
@@ -1248,7 +1248,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "P116E76923C5457A4"
+        "uid": "${datasource}"
       },
       "description": "",
       "gridPos": {
@@ -1305,7 +1305,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 0,
@@ -1362,7 +1362,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "P116E76923C5457A4"
+        "uid": "${datasource}"
       },
       "description": "",
       "gridPos": {
@@ -1419,7 +1419,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 0,
@@ -1482,7 +1482,7 @@
         "current": {
           "selected": false,
           "text": "Google BigQuery (mlab-collaboration)",
-          "value": "P116E76923C5457A4"
+          "value": "${datasource}"
         },
         "hide": 2,
         "includeAll": false,
@@ -1512,7 +1512,7 @@
         },
         "datasource": {
           "type": "grafana-bigquery-datasource",
-          "uid": "P116E76923C5457A4"
+          "uid": "${datasource}"
         },
         "definition": "",
         "description": "Metro picker using cached metadata.   Sorted by continent, country and city, to facilitate comparing nearby metros.",
@@ -1616,7 +1616,7 @@
         },
         "datasource": {
           "type": "grafana-bigquery-datasource",
-          "uid": "P116E76923C5457A4"
+          "uid": "${datasource}"
         },
         "definition": "",
         "description": "Choose high volume Client ISPs. ",
