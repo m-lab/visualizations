@@ -1,0 +1,1707 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Full matrix of Client ISPs and MLab Server comparisons.\n\nNB: This is a pre-release subject to changes, including deletion, without notification.  It is not running on production infrastructure and may be unstable.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 504,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "xIXR1_LMz"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 18,
+        "x": 0,
+        "y": 0
+      },
+      "id": 121,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "# Metro Details Dashboard \n\n### NB: This is a pre-release of research software.\n\nIt is not running on production infrastructure so it is subject to change or deletion without notification and may be unstable.\n\nShow the detailed performance statistics between the top N client ISPs and all MLab sites in the selected metro.\nThe first three rows are aggregated: metro wide, by server or by Client ISP.\n\nThe rest of the dashboard show the performace statics individually between each of the top N Client ISPs and all MLab servers.\n\nUnder ideal conditions each Client ISP will have identical performance to each MLab site.\n\nFor more information see the [slides](https://docs.google.com/presentation/d/1wpx45K30QD2ZIDuS5WsuRGrbcCrxs56cvuhydWRIRiw/edit?usp=sharing).",
+        "mode": "markdown"
+      },
+      "pluginVersion": "11.1.3",
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 32,
+      "panels": [],
+      "title": "Summary Statistics -- Aggregated by the entire metro, MLab Sites and Client ISPs",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "rank"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 45
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 261
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "tests"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 71
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Percent"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 67
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "metro"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 55
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pct"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 35
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ISPrank"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 70
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "percent"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 62
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 9
+      },
+      "id": 20,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "11.1.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "SELECT *\nFROM (\n  SELECT metro, ISPrank, tests, percent,\n  CONCAT(REGEXP_REPLACE(ISPname, '^0 ', \"\"), \" summary\")AS ISPname,\n  FROM `${dataset}.cached_metro_report`(\"MinRTT\", \"${site:regex}\", ${rank})\n  WHERE level like \"Metro%%\"  \n    UNION ALL\n  SELECT metro, ISPrank, tests, percent, ISPname\n  FROM `${dataset}.cached_metro_report`(\"MinRTT\", \"${site:regex}\", ${rank})\n  WHERE level like \"ISP%%\" \n)  ORDER BY ISPrank",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Summary Statistics for the top $rank ISPs",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 9
+      },
+      "id": 102,
+      "options": {
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [],
+        "layout": {
+          "font": {
+            "color": "grey"
+          },
+          "legend": {
+            "orientation": "h"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": false,
+            "gridcolor": "#333",
+            "range": [
+              -0.3,
+              3.3
+            ],
+            "type": "log"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -0.0029507270930396725,
+              0.05606381476775378
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "console.log(data)\nwindow.updateVariables({query:{'var-project':'test'}, partial: true})",
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "location": "",
+          "project": "mlab-collaboration",
+          "rawQuery": true,
+          "rawSql": "WITH\ndata  AS (\n  SELECT\n    bin,\n    SUM(hist) as hist,\n    metro\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MinRTT\",  \"${site:regex}\", 900)\n  GROUP BY metro, bin\n)\n\nSELECT\n  bin,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by metro)\n    WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by metro)\n    ELSE SUM(hist) OVER (PARTITION BY metro ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by metro)\n  END AS data,\n  FORMAT(\"%t (%t tests)\",metro,  SUM(hist) OVER (partition by metro)) AS metro\nFROM data\nORDER BY bin",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Aggregate minRTT for all clients using sites in ${site:raw}",
+      "type": "ae3e-plotly-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 9
+      },
+      "id": 104,
+      "options": {
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [],
+        "layout": {
+          "font": {
+            "color": "grey"
+          },
+          "legend": {
+            "orientation": "h"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": false,
+            "gridcolor": "#333",
+            "range": [
+              -0.3,
+              3.3
+            ],
+            "type": "log"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -0.001094953488007279,
+              0.0208041162721383
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "console.log(data)\nwindow.updateVariables({query:{'var-project':'test'}, partial: true})",
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "location": "",
+          "project": "mlab-collaboration",
+          "rawQuery": true,
+          "rawSql": "WITH\ndata  AS (\n  SELECT\n    bin,\n    SUM(hist) as hist,\n    metro\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MeanThroughputMbps\",  \"${site:regex}\", 900)\n  GROUP BY metro, bin\n)\n\nSELECT\n  bin,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by metro)\n    WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by metro)\n    ELSE SUM(hist) OVER (PARTITION BY metro ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by metro)\n  END AS data,\n  FORMAT(\"%t (%t tests)\",metro,  SUM(hist) OVER (partition by metro)) AS metro\nFROM data\nORDER BY bin",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Aggregate Download Mbps for all clients using sites in ${site:raw}",
+      "type": "ae3e-plotly-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 0,
+        "y": 18
+      },
+      "id": 103,
+      "maxDataPoints": 80000,
+      "options": {
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [],
+        "layout": {
+          "font": {
+            "color": "grey"
+          },
+          "legend": {
+            "orientation": "h"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": false,
+            "gridcolor": "#333",
+            "range": [
+              1,
+              300
+            ],
+            "type": "linear"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -0.0017285959678148453,
+              0.03284332338848205
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "group": [],
+          "location": "US",
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "WITH\ndata  AS (\n  SELECT\n    linBin,\n    SUM(hist) as hist,\n    siteName\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"linearMinRTT\",  \"${site:regex}\", 900)\n  GROUP BY linBin, siteName\n)\n\nSELECT\n  linBin,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n    WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n    ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY linBin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n  END AS data,\n  FORMAT(\"%t (%t tests)\",siteName,  SUM(hist) OVER (partition by siteName)) AS siteName\nFROM data\nORDER BY linBin",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "timeColumn": "-- time --",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Download MinRTT (linear mS) per Site for all Clients",
+      "type": "ae3e-plotly-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 8,
+        "y": 18
+      },
+      "id": 80,
+      "maxDataPoints": 80000,
+      "options": {
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [],
+        "layout": {
+          "font": {
+            "color": "grey"
+          },
+          "legend": {
+            "orientation": "h"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": false,
+            "gridcolor": "#333",
+            "range": [
+              -0.3,
+              3.3
+            ],
+            "type": "log"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -0.0031667503166750324,
+              0.0601682560168256
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "group": [],
+          "location": "US",
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "WITH\ndata  AS (\n  SELECT\n    bin,\n    SUM(hist) as hist,\n    siteName\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MinRTT\",  \"${site:regex}\", 900)\n  GROUP BY bin, siteName\n)\n\nSELECT\n  bin,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n    WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n    ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n  END AS data,\n  FORMAT(\"%t (%t tests)\",siteName,  SUM(hist) OVER (partition by siteName)) AS siteName\nFROM data\nORDER BY bin",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "timeColumn": "-- time --",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Download MinRTT (mS) per Site for all Clients",
+      "type": "ae3e-plotly-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 16,
+        "y": 18
+      },
+      "id": 26,
+      "maxDataPoints": 80000,
+      "options": {
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [],
+        "layout": {
+          "font": {
+            "color": "grey"
+          },
+          "legend": {
+            "orientation": "h"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": false,
+            "gridcolor": "#333",
+            "range": [
+              -0.3,
+              3.3
+            ],
+            "type": "log"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -0.001099698801707513,
+              0.02089427723244274
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "group": [],
+          "location": "US",
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "WITH\ndata  AS (\n  SELECT\n    bin,\n    SUM(hist) as hist,\n    siteName\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MeanThroughputMbps\",  \"${site:regex}\", 900)\n  GROUP BY bin, siteName\n)\n\nSELECT\n  bin,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n    WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n    ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n  END AS data,\n  FORMAT(\"%t (%t tests)\",siteName,  SUM(hist) OVER (partition by siteName)) AS siteName,\nFROM data\nORDER BY bin\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "timeColumn": "-- time --",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Download Mbps per Site for all Clients",
+      "type": "ae3e-plotly-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 0,
+        "y": 31
+      },
+      "id": 33,
+      "maxDataPoints": 80000,
+      "options": {
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [],
+        "layout": {
+          "font": {
+            "color": "grey"
+          },
+          "legend": {
+            "orientation": "h"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": false,
+            "gridcolor": "#333",
+            "range": [
+              0,
+              300
+            ],
+            "type": "linear"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -0.0038515406162464997,
+              0.07317927170868348
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "group": [],
+          "location": "US",
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    linBin,\n    SUM(hist) AS hist,\n    ISPname,\n    ISPrank\n  FROM `${dataset}.access_ndt7_cached_histograms`('linearMinRTT', \"${site:regex}\", ${rank})\n  GROUP BY ISPname, ISPrank, linBin\n)\n\nSELECT linBin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by ISPname)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by ISPname)\n      ELSE SUM(hist) OVER (PARTITION BY ISPname ORDER BY linBin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by ISPname)\n    END AS data,\n    ISPname,\n  FROM ISPdata\n  ORDER BY ISPrank, linBin\n  ",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "timeColumn": "-- time --",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Download MinRTT (linear mS) per top ${rank} client ISPs and selected sites. ",
+      "type": "ae3e-plotly-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 8,
+        "y": 31
+      },
+      "id": 69,
+      "maxDataPoints": 80000,
+      "options": {
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [],
+        "layout": {
+          "font": {
+            "color": "grey"
+          },
+          "legend": {
+            "orientation": "h"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": false,
+            "gridcolor": "#333",
+            "range": [
+              -0.3,
+              3.3
+            ],
+            "type": "log"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -0.006551362683438157,
+              0.12447589098532495
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "group": [],
+          "location": "US",
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    bin,\n    SUM(hist) AS hist,\n    ISPname,\n    ISPrank,\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MinRTT\", \"${site:regex}\", ${rank})\n  GROUP BY ISPname, ISPrank, bin\n)\n\nSELECT bin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by ISPname)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by ISPname)\n      ELSE SUM(hist) OVER (PARTITION BY ISPname ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by ISPname)\n    END AS data,\n    ISPname,\n  FROM ISPdata\n  ORDER BY ISPrank, bin",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "timeColumn": "-- time --",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Download MinRTT (mS) per top $rank client ISPs and selected Sites",
+      "type": "ae3e-plotly-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 16,
+        "y": 31
+      },
+      "id": 17,
+      "maxDataPoints": 80000,
+      "options": {
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [],
+        "layout": {
+          "font": {
+            "color": "grey"
+          },
+          "legend": {
+            "orientation": "h"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": false,
+            "gridcolor": "#333",
+            "range": [
+              -0.3,
+              3.3
+            ],
+            "type": "log"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -0.0014849755415793154,
+              0.02821453529000699
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "group": [],
+          "location": "US",
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    bin,\n    SUM(hist) AS hist,\n    ISPname,\n    ISPrank,\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MeanThroughputMbps\", \"${site:regex}\", ${rank})\n  GROUP BY ISPname, ISPrank, bin\n  \n)\n\nSELECT bin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by ISPname)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by ISPname)\n      ELSE SUM(hist) OVER (PARTITION BY ISPname ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by ISPname)\n    END AS data,\n    ISPname,\n  FROM ISPdata\n  ORDER BY ISPrank, bin",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "timeColumn": "-- time --",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Download Mbps per top $rank client ISPs and selected Sites",
+      "type": "ae3e-plotly-panel"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 44
+      },
+      "id": 34,
+      "panels": [],
+      "repeat": "ClientISP",
+      "repeatDirection": "h",
+      "title": "Performance Distributions for Client ISP  $ClientISP",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 0,
+        "y": 45
+      },
+      "id": 81,
+      "maxDataPoints": 80000,
+      "options": {
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [],
+        "layout": {
+          "font": {
+            "color": "grey"
+          },
+          "legend": {
+            "orientation": "h"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": false,
+            "gridcolor": "#333",
+            "range": [
+              0,
+              300
+            ],
+            "type": "linear"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -0.0029411764705882357,
+              0.05588235294117647
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "group": [],
+          "location": "US",
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    linBin,\n    SUM(hist) AS hist,\n    siteName,\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"linearMinRTT\", \"${site:regex}\", ${rank})\n  WHERE ISPname IN ( \"${ClientISP:Sqlstring}\" )\n  GROUP BY siteName, linBin\n)\n\nSELECT linBin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n      ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY linBin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n    END AS data,\n    siteName,\n  FROM ISPdata\n  ORDER BY linBin",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "timeColumn": "-- time --",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Download MinRTT (linear mS) per MLab Site for ${ClientISP}",
+      "type": "ae3e-plotly-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 8,
+        "y": 45
+      },
+      "id": 48,
+      "maxDataPoints": 80000,
+      "options": {
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [],
+        "layout": {
+          "font": {
+            "color": "grey"
+          },
+          "legend": {
+            "orientation": "h"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": false,
+            "gridcolor": "#333",
+            "range": [
+              -0.3,
+              3
+            ],
+            "type": "log"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -0.0021675336801387224,
+              0.04118313992263572
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "group": [],
+          "location": "US",
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    bin,\n    SUM(hist) AS hist,\n    siteName,\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MinRTT\", \"${site:regex}\", ${rank})\n  WHERE ISPname IN ( \"${ClientISP:Sqlstring}\" )\n  GROUP BY siteName, bin\n)\n\nSELECT bin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n      ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n    END AS data,\n    siteName,\n  FROM ISPdata\n  ORDER BY bin",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "timeColumn": "-- time --",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Download MinRTT (mS) per MLab Site for $ClientISP",
+      "type": "ae3e-plotly-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 16,
+        "y": 45
+      },
+      "id": 43,
+      "maxDataPoints": 80000,
+      "options": {
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [],
+        "layout": {
+          "font": {
+            "color": "grey"
+          },
+          "legend": {
+            "orientation": "h"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": false,
+            "gridcolor": "#333",
+            "range": [
+              -0.3,
+              3.3
+            ],
+            "type": "log"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -0.0010829542993285686,
+              0.0205761316872428
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "group": [],
+          "location": "US",
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "\nWITH\n\nISPdata AS (\n  SELECT\n    bin,\n    SUM(hist) AS hist,\n    siteName,\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MeanThroughputMbps\", \"${site:regex}\", ${rank})\n  WHERE ISPname IN ( \"${ClientISP:Sqlstring}\" )\n  GROUP BY siteName, bin\n)\n\nSELECT bin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n      ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n    END AS data,\n    siteName,\n  FROM ISPdata\n  ORDER BY bin",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "timeColumn": "-- time --",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Download  Mbps per MLab Site for $ClientISP",
+      "type": "ae3e-plotly-panel"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Google BigQuery (mlab-collaboration)",
+          "value": "P116E76923C5457A4"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "grafana-bigquery-datasource",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "/mlab-collaboration/",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "hide": 2,
+        "name": "dataset",
+        "query": "mm_preproduction",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": false,
+          "text": "scl SA Santiago, CL",
+          "value": "scl"
+        },
+        "datasource": {
+          "type": "grafana-bigquery-datasource",
+          "uid": "P116E76923C5457A4"
+        },
+        "definition": "",
+        "description": "Metro picker using cached metadata.   Sorted by continent, country and city, to facilitate comparing nearby metros.",
+        "hide": 0,
+        "includeAll": false,
+        "label": "MLab metros",
+        "multi": false,
+        "name": "site",
+        "options": [],
+        "query": {
+          "editorMode": "code",
+          "format": 1,
+          "location": "",
+          "project": "measurement-lab",
+          "rawQuery": true,
+          "rawSql": "# From: 2024-12-20 Prototype cached site picker  \n\nSELECT\n  CONCAT(metro, ' ', ContinentCode, ' ', City, ', ', CountryCode) AS text,\n  metro AS value,\nFROM (\n  SELECT\n    REGEXP_EXTRACT(site, '^([a-z]{3})') AS metro,\n    ANY_VALUE(ContinentCode) AS ContinentCode,\n    ANY_VALUE(City) AS City,\n    ANY_VALUE(CountryCode) AS CountryCode,\n  FROM `${dataset}.cached_metadata` GROUP BY metro ORDER BY  ContinentCode, CountryCode, metro\n)\n",
+          "refId": "tempvar",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "2",
+          "value": "2"
+        },
+        "description": "Number of ISPs to include - TODO rename the variable",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Client Rows",
+        "multi": false,
+        "name": "rank",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": true,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "20",
+            "value": "20"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          }
+        ],
+        "query": "1,2,5,10,20,50",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-bigquery-datasource",
+          "uid": "P116E76923C5457A4"
+        },
+        "definition": "",
+        "description": "Choose high volume Client ISPs. ",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Client ISPs",
+        "multi": true,
+        "name": "ClientISP",
+        "options": [],
+        "query": {
+          "editorMode": "code",
+          "format": 1,
+          "location": "",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    ISPrank,\n    ISPname,\n    SUM(hist) AS tests,\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MinRTT\", \"${site:regex}\", ${rank})\n  GROUP BY ISPrank, ISPname\n  ORDER BY ISPrank\n  \n)\n\nSELECT * FROM ISPdata\n",
+          "refId": "tempvar",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "pdf",
+          "value": "pdf"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "mode",
+        "options": [
+          {
+            "selected": true,
+            "text": "pdf",
+            "value": "pdf"
+          },
+          {
+            "selected": false,
+            "text": "peak",
+            "value": "peak"
+          },
+          {
+            "selected": false,
+            "text": "cdf",
+            "value": "cdf"
+          }
+        ],
+        "query": "pdf,peak,cdf",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "2024-12-18T05:44:57.788Z",
+    "to": "2024-12-18T05:49:57.788Z"
+  },
+  "timepicker": {
+    "hidden": true
+  },
+  "timezone": "utc",
+  "title": "Metro Details Dashboard",
+  "uid": "20250114a",
+  "version": 19,
+  "weekStart": ""
+}
