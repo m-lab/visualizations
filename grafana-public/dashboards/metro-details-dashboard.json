@@ -54,6 +54,94 @@
       "type": "text"
     },
     {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "id": 126,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.1.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "",
+          "project": "mlab-collaboration",
+          "rawQuery": true,
+          "rawSql": "SELECT \"${datasource}\" AS DS\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -69,7 +157,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
+        "uid": "P116E76923C5457A4"
       },
       "description": "",
       "fieldConfig": {
@@ -223,7 +311,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "${datasource}"
+            "uid": "P116E76923C5457A4"
           },
           "editorMode": "code",
           "format": 1,
@@ -257,7 +345,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
+        "uid": "P116E76923C5457A4"
       },
       "gridPos": {
         "h": 9,
@@ -299,8 +387,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0029507270930396725,
-              0.05606381476775378
+              -0.0018391542624323545,
+              0.03494393098621474
             ],
             "type": "linear"
           }
@@ -312,7 +400,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "${datasource}"
+            "uid": "P116E76923C5457A4"
           },
           "editorMode": "code",
           "format": 0,
@@ -346,7 +434,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
+        "uid": "P116E76923C5457A4"
       },
       "gridPos": {
         "h": 9,
@@ -388,8 +476,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.001094953488007279,
-              0.0208041162721383
+              -0.001640879190464883,
+              0.031176704618832776
             ],
             "type": "linear"
           }
@@ -401,7 +489,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "${datasource}"
+            "uid": "P116E76923C5457A4"
           },
           "editorMode": "code",
           "format": 0,
@@ -435,7 +523,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
+        "uid": "P116E76923C5457A4"
       },
       "description": "",
       "gridPos": {
@@ -479,8 +567,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0017285959678148453,
-              0.03284332338848205
+              -0.003995038241613584,
+              0.0759057265906581
             ],
             "type": "linear"
           }
@@ -492,7 +580,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "${datasource}"
+            "uid": "P116E76923C5457A4"
           },
           "editorMode": "code",
           "format": 0,
@@ -549,7 +637,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
+        "uid": "P116E76923C5457A4"
       },
       "description": "",
       "gridPos": {
@@ -593,8 +681,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0031667503166750324,
-              0.0601682560168256
+              -0.00412134424663641,
+              0.07830554068609177
             ],
             "type": "linear"
           }
@@ -606,7 +694,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "${datasource}"
+            "uid": "P116E76923C5457A4"
           },
           "editorMode": "code",
           "format": 0,
@@ -663,7 +751,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
+        "uid": "P116E76923C5457A4"
       },
       "description": "",
       "gridPos": {
@@ -707,8 +795,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.001099698801707513,
-              0.02089427723244274
+              -0.0021408874721716253,
+              0.04067686197126088
             ],
             "type": "linear"
           }
@@ -720,7 +808,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "${datasource}"
+            "uid": "P116E76923C5457A4"
           },
           "editorMode": "code",
           "format": 0,
@@ -777,7 +865,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
+        "uid": "P116E76923C5457A4"
       },
       "description": "",
       "gridPos": {
@@ -834,7 +922,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "${datasource}"
+            "uid": "P116E76923C5457A4"
           },
           "editorMode": "code",
           "format": 0,
@@ -891,7 +979,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
+        "uid": "P116E76923C5457A4"
       },
       "description": "",
       "gridPos": {
@@ -948,7 +1036,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "${datasource}"
+            "uid": "P116E76923C5457A4"
           },
           "editorMode": "code",
           "format": 0,
@@ -1005,7 +1093,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
+        "uid": "P116E76923C5457A4"
       },
       "description": "",
       "gridPos": {
@@ -1062,7 +1150,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "${datasource}"
+            "uid": "P116E76923C5457A4"
           },
           "editorMode": "code",
           "format": 0,
@@ -1134,7 +1222,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
+        "uid": "P116E76923C5457A4"
       },
       "description": "",
       "gridPos": {
@@ -1191,7 +1279,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "${datasource}"
+            "uid": "P116E76923C5457A4"
           },
           "editorMode": "code",
           "format": 0,
@@ -1248,7 +1336,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
+        "uid": "P116E76923C5457A4"
       },
       "description": "",
       "gridPos": {
@@ -1305,7 +1393,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "${datasource}"
+            "uid": "P116E76923C5457A4"
           },
           "editorMode": "code",
           "format": 0,
@@ -1362,7 +1450,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
+        "uid": "P116E76923C5457A4"
       },
       "description": "",
       "gridPos": {
@@ -1419,7 +1507,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "${datasource}"
+            "uid": "P116E76923C5457A4"
           },
           "editorMode": "code",
           "format": 0,
@@ -1482,7 +1570,7 @@
         "current": {
           "selected": false,
           "text": "Google BigQuery (mlab-collaboration)",
-          "value": "${datasource}"
+          "value": "P116E76923C5457A4"
         },
         "hide": 2,
         "includeAll": false,
@@ -1507,12 +1595,12 @@
         "allValue": ".*",
         "current": {
           "selected": false,
-          "text": "scl SA Santiago, CL",
-          "value": "scl"
+          "text": "gru SA Sao Paulo, BR",
+          "value": "gru"
         },
         "datasource": {
           "type": "grafana-bigquery-datasource",
-          "uid": "${datasource}"
+          "uid": "P116E76923C5457A4"
         },
         "definition": "",
         "description": "Metro picker using cached metadata.   Sorted by continent, country and city, to facilitate comparing nearby metros.",
@@ -1616,7 +1704,7 @@
         },
         "datasource": {
           "type": "grafana-bigquery-datasource",
-          "uid": "${datasource}"
+          "uid": "P116E76923C5457A4"
         },
         "definition": "",
         "description": "Choose high volume Client ISPs. ",
@@ -1702,6 +1790,6 @@
   "timezone": "utc",
   "title": "Metro Details Dashboard",
   "uid": "20250114a",
-  "version": 19,
+  "version": 21,
   "weekStart": ""
 }
