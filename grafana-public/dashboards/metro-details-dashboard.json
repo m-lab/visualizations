@@ -54,94 +54,6 @@
       "type": "text"
     },
     {
-      "datasource": {
-        "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 18,
-        "y": 0
-      },
-      "id": 126,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "pluginVersion": "11.1.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
-          },
-          "editorMode": "code",
-          "format": 1,
-          "location": "",
-          "project": "mlab-collaboration",
-          "rawQuery": true,
-          "rawSql": "SELECT \"${datasource}\" AS DS\n",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -1644,7 +1556,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "2",
           "value": "2"
         },
@@ -1704,7 +1616,7 @@
         },
         "datasource": {
           "type": "grafana-bigquery-datasource",
-          "uid": "P116E76923C5457A4"
+          "uid": "${datasource}"
         },
         "definition": "",
         "description": "Choose high volume Client ISPs. ",
@@ -1720,7 +1632,7 @@
           "location": "",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    ISPrank,\n    ISPname,\n    SUM(hist) AS tests,\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MinRTT\", \"${site:regex}\", ${rank})\n  GROUP BY ISPrank, ISPname\n  ORDER BY ISPrank\n  \n)\n\nSELECT * FROM ISPdata\n",
+          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    ISPrank,\n    ISPname,\n    SUM(hist) AS tests,\n  -- Uses ${datasource}  Implicitly\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MinRTT\", \"${site:regex}\", ${rank})\n  GROUP BY ISPrank, ISPname\n  ORDER BY ISPrank\n  \n)\n\nSELECT * FROM ISPdata\n",
           "refId": "tempvar",
           "sql": {
             "columns": [
@@ -1790,6 +1702,6 @@
   "timezone": "utc",
   "title": "Metro Details Dashboard",
   "uid": "20250114a",
-  "version": 21,
+  "version": 23,
   "weekStart": ""
 }
