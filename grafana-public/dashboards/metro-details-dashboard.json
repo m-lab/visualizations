@@ -617,7 +617,7 @@
           "orderBySort": "1",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "WITH\ndata  AS (\n  SELECT\n    bin,\n    SUM(hist) as hist,\n    siteName\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MinRTT\",  \"${site:regex}\", 900)\n  GROUP BY bin, siteName\n)\n\nSELECT\n  bin,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n    WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n    ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n  END AS data,\n  FORMAT(\"%t (%t tests)\",siteName,  SUM(hist) OVER (partition by siteName)) AS siteName\nFROM data\nORDER BY bin",
+          "rawSql": "WITH\ndata  AS (\n  SELECT\n    bin,\n    SUM(hist) as hist,\n    siteName\n  # Uses ${datasource} implicitly\n  FROM `${dataset}.access_ndt7_cached_histograms`(\"MinRTT\",  \"${site:regex}\", 900)\n  GROUP BY bin, siteName\n)\n\nSELECT\n  bin,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n    WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n    ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n  END AS data,\n  FORMAT(\"%t (%t tests)\",siteName,  SUM(hist) OVER (partition by siteName)) AS siteName\nFROM data\nORDER BY bin",
           "refId": "A",
           "select": [
             [
@@ -821,8 +821,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0041055645079002044,
-              0.07800572565010386
+              -0.0049765306472059475,
+              0.094554082296913
             ],
             "type": "linear"
           }
@@ -935,7 +935,7 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.010046703595090694,
+              -0.010046703595090693,
               0.19088736830672315
             ],
             "type": "linear"
@@ -1049,8 +1049,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.002008464807632342,
-              0.03816083134501449
+              -0.002304712681054007,
+              0.04378954094002613
             ],
             "type": "linear"
           }
@@ -1484,7 +1484,7 @@
           "text": "Google BigQuery (mlab-collaboration)",
           "value": "P116E76923C5457A4"
         },
-        "hide": 2,
+        "hide": 1,
         "includeAll": false,
         "multi": false,
         "name": "datasource",
@@ -1499,7 +1499,7 @@
       {
         "hide": 2,
         "name": "dataset",
-        "query": "mm_preproduction",
+        "query": "mlab-collaboration.mm_preproduction",
         "skipUrlSync": false,
         "type": "constant"
       },
@@ -1557,8 +1557,8 @@
       {
         "current": {
           "selected": false,
-          "text": "2",
-          "value": "2"
+          "text": "5",
+          "value": "5"
         },
         "description": "Number of ISPs to include - TODO rename the variable",
         "hide": 0,
@@ -1573,12 +1573,12 @@
             "value": "1"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "2",
             "value": "2"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "5",
             "value": "5"
           },
@@ -1702,6 +1702,6 @@
   "timezone": "utc",
   "title": "Metro Details Dashboard",
   "uid": "20250114a",
-  "version": 27,
+  "version": 30,
   "weekStart": ""
 }
