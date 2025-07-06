@@ -47,6 +47,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
+
         "content": "# Global Metro Bar Chart \n\n### Warning: This is a pre-release of experimental software.\nIt is not running on production infrastructure and is subject to changes or deletion without notification.\n\nFor more information scroll down or see the [slides](https://docs.google.com/presentation/d/1wpx45K30QD2ZIDuS5WsuRGrbcCrxs56cvuhydWRIRiw/edit?usp=sharing).\n\nEvaluate the interconnections between ISPs by measuring differences in performance to MLab servers\nfrom each of the N largest Client ISPs in the metro.\nIf the score is poor it means that users attached to a some ISPs get different performances\nto the different MLab servers,\nindicating non-uniform connectivity between the ISPs.\n\nThe metrics are: KSdistance (0 is ideal), the worst case vertical distance between the cdf distributions;\nand spread (1 is ideal), the worst case ratio of the geometric means.\nTo make it more visible, KSdistance is scaled 10x,\nsuch that 10 is the worst possible score, indicating non-overlapping distributions.\n\nThis data is precomputed for the date range shown, and can't be adjusted in this version of the dashboard.\n\nTo see the entire MLab fleet select verbose,\nwhich also shows singleton MLab sites that can't be analyzed by this technique.\nThese sites show 0 spread.\n\n\n",
         "mode": "markdown"
       },
