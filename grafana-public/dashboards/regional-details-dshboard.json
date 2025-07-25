@@ -858,8 +858,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -2.08,
-              3.48
+              -2.02,
+              3.9599999999999995
             ],
             "showspikes": false,
             "type": "log"
@@ -970,8 +970,8 @@
         "allValue": ".*",
         "current": {
           "selected": false,
-          "text": "gru SA Campinas, BR",
-          "value": "gru"
+          "text": "sin AS Singapore, SG",
+          "value": "sin"
         },
         "datasource": {
           "type": "grafana-bigquery-datasource",
@@ -1020,8 +1020,8 @@
       {
         "current": {
           "selected": false,
-          "text": "500",
-          "value": "500"
+          "text": "1000",
+          "value": "1000"
         },
         "description": "Radius from the anchor metro for selecting servers",
         "hide": 0,
@@ -1029,12 +1029,12 @@
         "name": "radius",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "500",
             "value": "500"
           }
         ],
-        "query": "500",
+        "query": "1000",
         "skipUrlSync": false,
         "type": "textbox"
       },
@@ -1042,22 +1042,14 @@
         "current": {
           "selected": true,
           "text": [
-            "gru02 (0.0) 262589 INTERNEXA BRASIL OPERADORA DE TELECOMUNICACOES S A",
-            "gru03 (0.0) 6762 TELECOM ITALIA SPARKLE S p A ",
-            "gru06 (0.0) 396982 Google LLC",
-            "gru1916 (0.0) 1916 (missing)",
-            "gig1916 (336.0) 1916 (missing)",
-            "cwb10881 (360.0) 10881 (missing)",
-            "cnf1916 (495.0) 1916 (missing)"
+            "sin01 (0.0 SG) 6453 TATA COMMUNICATIONS (AMERICA) INC",
+            "sin03 (0.0 SG) 15169 Google LLC",
+            "sin54825 (0.0 SG) 54825 (missing)"
           ],
           "value": [
-            "gru02",
-            "gru03",
-            "gru06",
-            "gru1916",
-            "gig1916",
-            "cwb10881",
-            "cnf1916"
+            "sin01",
+            "sin03",
+            "sin54825"
           ]
         },
         "datasource": {
@@ -1078,7 +1070,7 @@
           "location": "",
           "project": "mlab-collaboration",
           "rawQuery": true,
-          "rawSql": " SELECT\n  # FORMAT ('TEXT=\"%t (%t) %t\" VALUE=%t', site, ANY_VALUE(ROUND(distance)), ANY_VALUE(ASName), site) AS LongText,\n  site AS value,\n  FORMAT ('%t (%t) %t', site, ANY_VALUE(ROUND(distance)), ANY_VALUE(ASName)) AS text\n  FROM (\n    SELECT\n    ST_DISTANCE(\n      ( SELECT ANY_VALUE(ST_GEOGPOINT(Longitude, Latitude))\n        FROM `mlab-collaboration.mm_preproduction.cached_metadata`\n        WHERE  REGEXP_CONTAINS ( site, \"^(${anchor:regex})\" )),\n      ST_GEOGPOINT(Longitude, Latitude)\n    ) / 1000.0 AS distance,\n    *\n    -- Uses ${datasource}  Implicitly\n    FROM `mlab-collaboration.mm_preproduction.cached_metadata`\n    ORDER BY distance, site\n)\nWHERE distance < ${radius}\nGROUP BY site\n",
+          "rawSql": " SELECT\n  # FORMAT ('TEXT=\"%t (%t) %t\" VALUE=%t', site, ANY_VALUE(ROUND(distance)), ANY_VALUE(ASName), site) AS LongText,\n  site AS value,\n  FORMAT ('%t (%t %t) %t', site, ANY_VALUE(ROUND(distance)), ANY_VALUE(CountryCode), ANY_VALUE(ASName)) AS text\n  FROM (\n    SELECT\n    ST_DISTANCE(\n      ( SELECT ANY_VALUE(ST_GEOGPOINT(Longitude, Latitude))\n        -- Uses ${datasource} implicitly\n        FROM `mlab-collaboration.mm_preproduction.cached_metadata`\n        WHERE  REGEXP_CONTAINS ( site, \"^(${anchor:regex})\" )),\n      ST_GEOGPOINT(Longitude, Latitude)\n    ) / 1000.0 AS distance,\n    *\n    -- Uses ${datasource}  Implicitly\n    FROM `mlab-collaboration.mm_preproduction.cached_metadata`\n    ORDER BY distance, site\n)\nWHERE distance < ${radius}\nGROUP BY site\n",
           "refId": "tempvar",
           "sql": {
             "columns": [
@@ -1173,18 +1165,28 @@
         "current": {
           "selected": true,
           "text": [
-            "28573 CLARO S A ",
-            "18881 TELEFÔNICA BRASIL S A",
-            "26599 TELEFÔNICA BRASIL S A",
-            "26615 Tim Celular S A ",
-            "27699 TELEFÔNICA BRASIL S A"
+            "7713 PT Telekomunikasi Indonesia",
+            "131445 Advance Wireless Network",
+            "17552 TRUE INTERNET CO , LTD ",
+            "132618 Real Future Company Limited",
+            "23693 PT  Telekomunikasi Selular",
+            "133481 AIS Fibre",
+            "24378 Total Access Communication PLC ",
+            "45758 Triple T Internet Triple T Broadband",
+            "132061 Realmove Company Limited",
+            "4761 INDOSAT Internet Network Provider"
           ],
           "value": [
-            "28573 CLARO S A ",
-            "18881 TELEFÔNICA BRASIL S A",
-            "26599 TELEFÔNICA BRASIL S A",
-            "26615 Tim Celular S A ",
-            "27699 TELEFÔNICA BRASIL S A"
+            "7713 PT Telekomunikasi Indonesia",
+            "131445 Advance Wireless Network",
+            "17552 TRUE INTERNET CO , LTD ",
+            "132618 Real Future Company Limited",
+            "23693 PT  Telekomunikasi Selular",
+            "133481 AIS Fibre",
+            "24378 Total Access Communication PLC ",
+            "45758 Triple T Internet Triple T Broadband",
+            "132061 Realmove Company Limited",
+            "4761 INDOSAT Internet Network Provider"
           ]
         },
         "datasource": {
@@ -1442,6 +1444,6 @@
   "timezone": "utc",
   "title": "MLab Regional Details Dashboard",
   "uid": "dees4pr47gn40a",
-  "version": 57,
+  "version": 59,
   "weekStart": ""
 }
