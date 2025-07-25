@@ -1078,7 +1078,7 @@
           "location": "",
           "project": "mlab-collaboration",
           "rawQuery": true,
-          "rawSql": " SELECT\n  # FORMAT ('TEXT=\"%t (%t) %t\" VALUE=%t', site, ANY_VALUE(ROUND(distance)), ANY_VALUE(ASName), site) AS LongText,\n  site AS value,\n  FORMAT ('%t (%t) %t', site, ANY_VALUE(ROUND(distance)), ANY_VALUE(ASName)) AS text\n  FROM (\n    SELECT\n    ST_DISTANCE(\n      ( SELECT ANY_VALUE(ST_GEOGPOINT(Longitude, Latitude))\n        FROM `mlab-collaboration.mm_preproduction.cached_metadata`\n        WHERE  REGEXP_CONTAINS ( site, \"^(${anchor:regex})\" )),\n      ST_GEOGPOINT(Longitude, Latitude)\n    ) / 1000.0 AS distance,\n    *\n    FROM `mlab-collaboration.mm_preproduction.cached_metadata`\n    ORDER BY distance, site\n)\nWHERE distance < ${radius}\nGROUP BY site\n",
+          "rawSql": " SELECT\n  # FORMAT ('TEXT=\"%t (%t) %t\" VALUE=%t', site, ANY_VALUE(ROUND(distance)), ANY_VALUE(ASName), site) AS LongText,\n  site AS value,\n  FORMAT ('%t (%t) %t', site, ANY_VALUE(ROUND(distance)), ANY_VALUE(ASName)) AS text\n  FROM (\n    SELECT\n    ST_DISTANCE(\n      ( SELECT ANY_VALUE(ST_GEOGPOINT(Longitude, Latitude))\n        FROM `mlab-collaboration.mm_preproduction.cached_metadata`\n        WHERE  REGEXP_CONTAINS ( site, \"^(${anchor:regex})\" )),\n      ST_GEOGPOINT(Longitude, Latitude)\n    ) / 1000.0 AS distance,\n    *\n    -- Uses ${datasource}  Implicitly\n    FROM `mlab-collaboration.mm_preproduction.cached_metadata`\n    ORDER BY distance, site\n)\nWHERE distance < ${radius}\nGROUP BY site\n",
           "refId": "tempvar",
           "sql": {
             "columns": [
@@ -1442,6 +1442,6 @@
   "timezone": "utc",
   "title": "MLab Regional Details Dashboard",
   "uid": "dees4pr47gn40a",
-  "version": 56,
+  "version": 57,
   "weekStart": ""
 }
