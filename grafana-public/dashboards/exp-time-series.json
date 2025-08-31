@@ -1,0 +1,1025 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "First Time Series of metro report data, including KSdistance and spread",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": 512,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": true,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": true,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "spread"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 23,
+        "x": 0,
+        "y": 0
+      },
+      "id": 23,
+      "links": [
+        {
+          "title": "SPoutlier",
+          "url": ""
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "timezone": [
+          "utc"
+        ],
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "",
+          "project": "mlab-collaboration",
+          "rawQuery": true,
+          "rawSql": "SELECT timeBin AS time,\n  KSdistance, KSoutlier,\n  spread, SPoutlier,\n  -- Implicitly uses ${datasource}\nFROM `${dataset}.timeseries_report` (\"${method}\",\"${xAxis}\", ${binSize}, \"${field}\",\n    -- DATE_SUB(\"$e ndDate\", INTERVAL ${d uration:raw}-1 DAY), DATE(\"$e ndDate\"),\n    DATE(\"${__from:date}\"), DATE(\"${__to:date}\"),\n    \"^(${region:regex}).*\", \"^(${ClientISP:regex})\", ${ISPcount})\nWHERE level = \"Regional Summary\"\n  -- AND (TIMESTAMP(DATE_SUB(\"$endDate\", INTERVAL ${duration:raw}-1 DAY)) < \"${__to:date:iso}\" OR\n  --  ERROR('Prefetch is before timepicker'))\n  -- AND ( \"${__from:date:iso}\" > TIMESTAMP(DATE(\"$endDate\")) OR\n  --  ERROR('Prefetch is after timepicker'))\nORDER BY timeBin \n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Time Series",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "description": "Show servers and ISPs causing outliers.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": true,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "spread"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 23,
+        "x": 0,
+        "y": 8
+      },
+      "id": 24,
+      "links": [
+        {
+          "title": "SPoutlier",
+          "url": ""
+        }
+      ],
+      "options": {
+        "barRadius": 0,
+        "barWidth": 1,
+        "fullHighlight": true,
+        "groupWidth": 0.79,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "time",
+        "xTickLabelMaxLength": 10,
+        "xTickLabelRotation": -90,
+        "xTickLabelSpacing": 0
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "",
+          "project": "mlab-collaboration",
+          "rawQuery": true,
+          "rawSql": "SELECT timeBin AS time,\n  KSdistance, KSoutlier,\n  spread, SPoutlier,\n  -- Implicitly uses ${datasource}\nFROM `${dataset}.timeseries_report` (\"${method}\",\"${xAxis}\", ${binSize}, \"${field}\",\n    -- DATE_SUB(\"$e ndDate\", INTERVAL ${d uration:raw}-1 DAY), DATE(\"$e ndDate\"),\n    DATE(\"${__from:date}\"), DATE(\"${__to:date}\"),\n    \"^(${region:regex}).*\", \"^(${ClientISP:regex})\", ${ISPcount})\nWHERE level = \"Regional Summary\"\n  -- AND (TIMESTAMP(DATE_SUB(\"$endDate\", INTERVAL ${duration:raw}-1 DAY)) < \"${__to:date:iso}\" OR\n  --  ERROR('Prefetch is before timepicker'))\n  -- AND ( \"${__from:date:iso}\" > TIMESTAMP(DATE(\"$endDate\")) OR\n  --  ERROR('Prefetch is after timepicker'))\nORDER BY timeBin \n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Time Series with hover data",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "description": "These are aggregated across the entire prefetch  date range.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "level"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 142
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "metro"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 64
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Sites"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 47
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "tests"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 66
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "percent"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 69
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "KSdistance"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 89
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Gmean"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 63
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "spread"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 65
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ISPrank"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 52
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "data"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 175
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Spread"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 54
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ISPname"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 343
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ISPtests"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 76
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 23,
+        "x": 0,
+        "y": 20
+      },
+      "id": 22,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "11.1.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "",
+          "project": "mlab-collaboration",
+          "rawQuery": true,
+          "rawSql": "SELECT * EXCEPT (serverStart, serverEnd)\nFROM `${dataset}.regional_report` (\"${method}\",\"none\", ${binSize},\"${field}\",\n    -- DATE_SUB(\"$endDate\", INTERVAL ${duration:raw}-1 DAY),\n    -- DATE(\"$endDate\"),\n    DATE(\"${__from:date}\"), DATE(\"${__to:date}\"),\n    \"^(${region:regex}).*\", \"^(${ClientISP:regex})\", ${ISPcount})\nWHERE \"${verbose:raw}\" = 'yes' OR level like '%%Summary'\n# ORDER BY ISPname, Sites\nORDER BY ISPtests DESC, Sites",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Aggregate results for ${field}",
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Google BigQuery (mlab-collaboration)",
+          "value": "P116E76923C5457A4"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "grafana-bigquery-datasource",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "/(mlab-oti|mlab-staging|mlab-sandbox|mlab-collaboration)/",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "hide": 2,
+        "label": "dataset",
+        "name": "dataset",
+        "query": "mlab-collaboration.mm_preproduction",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "experimental",
+          "value": "experimental"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "method",
+        "options": [
+          {
+            "selected": false,
+            "text": "cached",
+            "value": "cached"
+          },
+          {
+            "selected": false,
+            "text": "live",
+            "value": "live"
+          },
+          {
+            "selected": true,
+            "text": "experimental",
+            "value": "experimental"
+          }
+        ],
+        "query": "cached, live ,experimental",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "MinRTT",
+          "value": "MinRTT"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "field",
+        "options": [
+          {
+            "selected": true,
+            "text": "MinRTT",
+            "value": "MinRTT"
+          },
+          {
+            "selected": false,
+            "text": "MeanThroughputMbps",
+            "value": "MeanThroughputMbps"
+          },
+          {
+            "selected": false,
+            "text": "uploadMeanThroughputMbps",
+            "value": "uploadMeanThroughputMbps"
+          },
+          {
+            "selected": false,
+            "text": "LossRate",
+            "value": "LossRate"
+          },
+          {
+            "selected": false,
+            "text": "linearMinRTT",
+            "value": "linearMinRTT"
+          },
+          {
+            "selected": false,
+            "text": "linearMSS",
+            "value": "linearMSS"
+          },
+          {
+            "selected": false,
+            "text": "RTO",
+            "value": "RTO"
+          },
+          {
+            "selected": false,
+            "text": "MSS",
+            "value": "MSS"
+          },
+          {
+            "selected": false,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "MinRTT, MeanThroughputMbps, uploadMeanThroughputMbps, LossRate, linearMinRTT, linearMSS, RTO, MSS, \n",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "den NA Denver, US",
+          "value": "den"
+        },
+        "datasource": {
+          "type": "grafana-bigquery-datasource",
+          "uid": "${datasource}"
+        },
+        "definition": "",
+        "description": "Used to select Client ISPs to be evaluated in  region. ",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Anchor metro",
+        "multi": false,
+        "name": "anchor",
+        "options": [],
+        "query": {
+          "editorMode": "code",
+          "format": 1,
+          "location": "",
+          "project": "mlab-collaboration",
+          "rawQuery": true,
+          "rawSql": "# From: 2024-12-20 Prototype cached site picker  \n\nSELECT\n  CONCAT(metro, ' ', ContinentCode, ' ', City, ', ', CountryCode) AS text,\n  metro AS value,\nFROM (\n  SELECT\n    REGEXP_EXTRACT(site, '^([a-z]{3})') AS metro,\n    ANY_VALUE(ContinentCode) AS ContinentCode,\n    ANY_VALUE(City) AS City,\n    ANY_VALUE(CountryCode) AS CountryCode,\n    -- Uses ${datasource} implicitly\n  FROM `${dataset}.cached_metadata`\n  GROUP BY metro\n  ORDER BY  ContinentCode, CountryCode, metro\n)\n",
+          "refId": "tempvar",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "500",
+          "value": "500"
+        },
+        "description": "Radius from the anchor metro for selecting servers",
+        "hide": 0,
+        "label": "Radius (kM)",
+        "name": "radius",
+        "options": [
+          {
+            "selected": true,
+            "text": "500",
+            "value": "500"
+          }
+        ],
+        "query": "500",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "den02 (0.0 US) 3356 Level 3 Parent, LLC",
+            "den04 (0.0 US) 6461 Zayo Bandwidth",
+            "den05 (0.0 US) 1299 Telia Company AB"
+          ],
+          "value": [
+            "den02",
+            "den04",
+            "den05"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-bigquery-datasource",
+          "uid": "P116E76923C5457A4"
+        },
+        "definition": "",
+        "description": "Manually select  server sites within a specified radius of the anchor metro.",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Servers",
+        "multi": true,
+        "name": "region",
+        "options": [],
+        "query": {
+          "editorMode": "code",
+          "format": 1,
+          "location": "",
+          "project": "mlab-collaboration",
+          "rawQuery": true,
+          "rawSql": " SELECT\n  # FORMAT ('TEXT=\"%t (%t) %t\" VALUE=%t', site, ANY_VALUE(ROUND(distance)), ANY_VALUE(ASName), site) AS LongText,\n  site AS value,\n  FORMAT ('%t (%t %t) %t', site, ANY_VALUE(ROUND(distance)), ANY_VALUE(CountryCode), ANY_VALUE(ASName)) AS text\n  FROM (\n    SELECT\n    ST_DISTANCE(\n      ( SELECT ANY_VALUE(ST_GEOGPOINT(Longitude, Latitude))\n        -- Uses ${datasource} implicitly\n        FROM `mlab-collaboration.mm_preproduction.cached_metadata`\n        WHERE  REGEXP_CONTAINS ( site, \"^(${anchor:regex})\" )),\n      ST_GEOGPOINT(Longitude, Latitude)\n    ) / 1000.0 AS distance,\n    *\n    -- Uses ${datasource}  Implicitly\n    FROM `mlab-collaboration.mm_preproduction.cached_metadata`\n    ORDER BY distance, site\n)\nWHERE distance < ${radius}\nGROUP BY site\n",
+          "refId": "tempvar",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "10",
+          "value": "10"
+        },
+        "description": "Number of ISPs to include",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Client ISPs",
+        "multi": false,
+        "name": "ISPcount",
+        "options": [
+          {
+            "selected": false,
+            "text": "0",
+            "value": "0"
+          },
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": true,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "20",
+            "value": "20"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          }
+        ],
+        "query": "0,1,2,5,10,20,50",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "13335 Cloudflare, Inc ",
+            "7922 Comcast Cable Communications, LLC"
+          ],
+          "value": [
+            "13335 Cloudflare, Inc ",
+            "7922 Comcast Cable Communications, LLC"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-bigquery-datasource",
+          "uid": "${datasource}"
+        },
+        "definition": "",
+        "description": "Choose high volume Client ISPs. ",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Client ISPs",
+        "multi": true,
+        "name": "ClientISP",
+        "options": [],
+        "query": {
+          "editorMode": "code",
+          "format": 1,
+          "location": "",
+          "project": "mlab-collaboration",
+          "rawQuery": true,
+          "rawSql": "\nSELECT\n  ISPname AS text,\n-- Uses \"${datasource}\"  Implicitly\nFROM `${dataset}.access_ndt7_cached_histograms`(\"MinRTT\", \"^(${anchor:regex})\", ${ISPcount})\nGROUP BY ISPrank, ISPname\nORDER BY ISPrank\n",
+          "refId": "tempvar",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "hour",
+          "value": "hour"
+        },
+        "description": "Time bin size.  Future may support diurnal summing.",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Time Axis",
+        "multi": false,
+        "name": "xAxis",
+        "options": [
+          {
+            "selected": false,
+            "text": "day",
+            "value": "day"
+          },
+          {
+            "selected": true,
+            "text": "hour",
+            "value": "hour"
+          }
+        ],
+        "query": "day,hour",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "yes",
+          "value": "yes"
+        },
+        "description": "Show or hide MSI stats in the table view",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "verbose",
+        "options": [
+          {
+            "selected": true,
+            "text": "yes",
+            "value": "yes"
+          },
+          {
+            "selected": false,
+            "text": "no",
+            "value": "no"
+          }
+        ],
+        "query": "yes, no",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "50",
+          "value": "50"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "binSize",
+        "options": [
+          {
+            "selected": true,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          }
+        ],
+        "query": "50, 1",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "hide": 2,
+        "name": "detailURL",
+        "query": "/d/20250114a?orgId=1",
+        "skipUrlSync": false,
+        "type": "constant"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now-3d"
+  },
+  "timepicker": {
+    "hidden": false,
+    "nowDelay": "3d",
+    "refresh_intervals": [
+      "1d",
+      "2d",
+      "7d"
+    ]
+  },
+  "timezone": "utc",
+  "title": "EXP Time Series",
+  "uid": "becs8jrn7r75sc",
+  "version": 28,
+  "weekStart": ""
+}
