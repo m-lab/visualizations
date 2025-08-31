@@ -47,99 +47,11 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "# Regional Details Dashboard \n\n### MLab Internal version\nCAUTION this version changes frequently\n\nScroll for more info.\n\nThe servers (the region) are selected by distance from the Anchor metro.\n\nThe Client ISPs are selected by rank in the Anchor metro.\n\nData is shown for all selected severs cross all selected Client ISPs.\n\nMethod selects the backend; Please select cached.\n\nFor more information see the\n[slides](https://docs.google.com/presentation/d/1wpx45K30QD2ZIDuS5WsuRGrbcCrxs56cvuhydWRIRiw/edit?usp=sharing).",
+        "content": "# Regional Details Dashboard\n### Warning: This is a pre-release of experimental software.\nIt is not running on production infrastructure and is subject to changes or deletion without notification.\nFor more information scroll down and see the [slides](https://docs.google.com/presentation/d/1wpx45K30QD2ZIDuS5WsuRGrbcCrxs56cvuhydWRIRiw/edit?usp=sharing).\n\nThe Anchor Metro is used to preselect servers (within the selected radus) and preselect client ISPs (by rank in the anchor metro).\n\nData is shown for all selected Severs cross all selected Client ISPs.\n\nNote that the client data is preselected by rank independently in each metro.\nIf a client ISP's rank differs between metros, some of its data might not be shown.\nTo workaround this, select extra client rows, beyond the last clinetISP that you want to see.\n\nMethod selects the backend: Please use cached.\n",
         "mode": "markdown"
       },
       "pluginVersion": "11.1.3",
       "type": "text"
-    },
-    {
-      "datasource": {
-        "type": "grafana-bigquery-datasource",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 12,
-        "y": 0
-      },
-      "id": 134,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "pluginVersion": "11.1.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
-          },
-          "editorMode": "code",
-          "format": 1,
-          "location": "",
-          "project": "mlab-collaboration",
-          "rawQuery": true,
-          "rawSql": "SELECT \"region:regexp\" AS Name, \"${region:regexp}\" AS Value\n  UNION ALL\nSELECT \"ClientISP\", \"${ClientISP}\"\n  UNION ALL\nSELECT \"anchor\", \"$anchor\"\n  UNION ALL\nSELECT \"anchor:regex\", \"${anchor:regex}\"",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
-        }
-      ],
-      "title": "Diagnostic Panel",
-      "type": "table"
     },
     {
       "collapsed": false,
@@ -177,7 +89,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -449,7 +362,7 @@
           "location": "",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "\nSELECT level, Metric, Sites, tests, pct, KSdistance, KSoutlier, Spread, SPoutlier, ISPname\nFROM (\n  SELECT * EXCEPT (ISPname),\n  data AS metric,\n  percent AS pct,\n  IF (level like \"Regional Summary\",\n    FORMAT (\"%t summary\", REGEXP_REPLACE(ISPname, '^0 ', \"\")),\n    ISPname\n    ) AS ISPname,\n  -- FROM `${dataset}.cached_metro_report`(\"MinRTT\", \"${site:regex}\", ${ISPcount})\n  FROM `${dataset}.regional_report` (\"${method}\",\"${xAxis}\", ${binSize}, \"${field}\",\n    DATE(REGEXP_EXTRACT(\"${__from:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    DATE(REGEXP_EXTRACT(\"${__to:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    \"^(${region:regex})\", \"^(${ClientISP:regex})\", ${ISPcount})\n  WHERE ${verbose} OR level like \"Regional Summary\" OR level LIKE \"ISP%%\"  \n)",
+          "rawSql": "\nSELECT level, Metric, Sites, tests, pct, KSdistance, KSoutlier, Spread, SPoutlier, ISPname\nFROM (\n  SELECT * EXCEPT (ISPname),\n  data AS metric,\n  percent AS pct,\n  IF (level like \"Regional Summary\",\n    FORMAT (\"%t summary\", REGEXP_REPLACE(ISPname, '^0 ', \"\")),\n    ISPname\n    ) AS ISPname,\n  -- FROM `${dataset}.cached_metro_report`(\"MinRTT\", \"${site:regex}\", ${ISPcount})\n  FROM `${dataset}.regional_report` (\"${method}\",\"${xAxis}\", ${binSize}, \"${table_field}\",\n    DATE(REGEXP_EXTRACT(\"${__from:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    DATE(REGEXP_EXTRACT(\"${__to:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    \"^(${region:regex})\", \"^(${ClientISP:regex})\", ${ISPcount})\n  WHERE ${verbose} OR level like \"Regional Summary\" OR level LIKE \"ISP%%\"  \n)",
           "refId": "A",
           "sql": {
             "columns": [
@@ -535,7 +448,7 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.055555555555555566,
+              -0.05555555555555556,
               1.0555555555555556
             ],
             "type": "linear"
@@ -649,7 +562,7 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.055555555555555566,
+              -0.05555555555555556,
               1.0555555555555556
             ],
             "type": "linear"
@@ -763,7 +676,7 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.055555555555555566,
+              -0.05555555555555556,
               1.0555555555555556
             ],
             "type": "linear"
@@ -868,8 +781,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -1.9199999999999995,
-              3.62
+              5.299999999999999,
+              7.4799999999999995
             ],
             "showspikes": false,
             "type": "log"
@@ -1010,64 +923,6 @@
         "type": "custom"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "MeanThroughputMbps",
-          "value": "MeanThroughputMbps"
-        },
-        "description": "Select the 4th data column.  (Linear fields don't display correctly.) \nMethod must be set to experimental FIRST.",
-        "hide": 0,
-        "includeAll": false,
-        "multi": false,
-        "name": "field",
-        "options": [
-          {
-            "selected": false,
-            "text": "MinRTT",
-            "value": "MinRTT"
-          },
-          {
-            "selected": true,
-            "text": "MeanThroughputMbps",
-            "value": "MeanThroughputMbps"
-          },
-          {
-            "selected": false,
-            "text": "uploadMeanThroughputMbps",
-            "value": "uploadMeanThroughputMbps"
-          },
-          {
-            "selected": false,
-            "text": "LossRate",
-            "value": "LossRate"
-          },
-          {
-            "selected": false,
-            "text": "linearMinRTT",
-            "value": "linearMinRTT"
-          },
-          {
-            "selected": false,
-            "text": "linearMSS",
-            "value": "linearMSS"
-          },
-          {
-            "selected": false,
-            "text": "RTO",
-            "value": "RTO"
-          },
-          {
-            "selected": false,
-            "text": "fineMeanThroughputMbps",
-            "value": "fineMeanThroughputMbps"
-          }
-        ],
-        "query": "MinRTT, MeanThroughputMbps, uploadMeanThroughputMbps, LossRate, linearMinRTT, linearMSS, RTO, fineMeanThroughputMbps",
-        "queryValue": "",
-        "skipUrlSync": false,
-        "type": "custom"
-      },
-      {
         "allValue": ".*",
         "current": {
           "selected": false,
@@ -1092,7 +947,7 @@
           "location": "",
           "project": "measurement-lab",
           "rawQuery": true,
-          "rawSql": "# From: 2024-12-20 Prototype cached site picker  \n\nSELECT\n  CONCAT(metro, ' ', ContinentCode, ' ', City, ', ', CountryCode) AS text,\n  metro AS value,\nFROM (\n  SELECT\n    REGEXP_EXTRACT(site, '^([a-z]{3})') AS metro,\n    ANY_VALUE(ContinentCode) AS ContinentCode,\n    ANY_VALUE(City) AS City,\n    ANY_VALUE(CountryCode) AS CountryCode,\n    -- Uses ${datasource} implicitly\n  FROM `${dataset}.cached_metadata`\n  GROUP BY metro\n  ORDER BY  ContinentCode, CountryCode, metro\n)\n",
+          "rawSql": "# From: 2024-12-20 Prototype cached site picker  \n\nSELECT\n  CONCAT(metro, ' ', ContinentCode, ' ', City, ', ', CountryCode) AS text,\n  metro AS value,\nFROM (\n  SELECT\n    REGEXP_EXTRACT(site, '^([a-z]{3})') AS metro,\n    ANY_VALUE(ContinentCode) AS ContinentCode,\n    ANY_VALUE(City) AS City,\n    ANY_VALUE(CountryCode) AS CountryCode,\n    -- Uses ${datasource} implicitly\n  FROM `mm_preproduction.cached_metadata`\n  GROUP BY metro\n  ORDER BY  ContinentCode, CountryCode, metro\n)\n",
           "refId": "tempvar",
           "sql": {
             "columns": [
@@ -1121,23 +976,35 @@
       {
         "current": {
           "selected": false,
-          "text": "500",
-          "value": "500"
+          "text": "1",
+          "value": "1"
         },
         "description": "Radius from the anchor metro for selecting servers",
         "hide": 0,
+        "includeAll": false,
         "label": "Radius (kM)",
+        "multi": false,
         "name": "radius",
         "options": [
           {
             "selected": true,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "100",
+            "value": "100"
+          },
+          {
+            "selected": false,
             "text": "500",
             "value": "500"
           }
         ],
-        "query": "500",
+        "query": "1, 100, 500",
         "skipUrlSync": false,
-        "type": "textbox"
+        "type": "custom"
       },
       {
         "current": {
@@ -1146,19 +1013,13 @@
             "gru02 (0.0 BR) 262589 INTERNEXA BRASIL OPERADORA DE TELECOMUNICACOES S A",
             "gru03 (0.0 BR) 6762 TELECOM ITALIA SPARKLE S p A ",
             "gru06 (0.0 BR) 396982 Google LLC",
-            "gru1916 (0.0 BR) 1916 (missing)",
-            "gig1916 (336.0 BR) 1916 (missing)",
-            "cwb10881 (360.0 BR) 10881 (missing)",
-            "cnf1916 (495.0 BR) 1916 (missing)"
+            "gru1916 (0.0 BR) 1916 (missing)"
           ],
           "value": [
             "gru02",
             "gru03",
             "gru06",
-            "gru1916",
-            "gig1916",
-            "cwb10881",
-            "cnf1916"
+            "gru1916"
           ]
         },
         "datasource": {
@@ -1216,7 +1077,7 @@
         "includeAll": false,
         "label": "Client Rows",
         "multi": false,
-        "name": "selectorISPcount",
+        "name": "ISPcount",
         "options": [
           {
             "selected": false,
@@ -1371,7 +1232,7 @@
           "value": "none"
         },
         "description": "Select time granularity for some experimental queries. ",
-        "hide": 0,
+        "hide": 2,
         "includeAll": false,
         "multi": false,
         "name": "xAxis",
@@ -1398,47 +1259,71 @@
         "type": "custom"
       },
       {
-        "allValue": "400",
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
-        },
-        "description": "Number of ISPs data to scan by name.  Must be larger than the ISPCount applied to the ISP selector.",
-        "hide": 0,
-        "includeAll": true,
-        "label": "",
-        "multi": false,
-        "name": "ISPcount",
-        "options": [
-          {
-            "selected": true,
-            "text": "All",
-            "value": "$__all"
-          },
-          {
-            "selected": false,
-            "text": "(10*2)",
-            "value": "(10*2)"
-          },
-          {
-            "selected": false,
-            "text": "(10*4)",
-            "value": "(10*4)"
-          }
-        ],
-        "query": "(${selectorISPcount}*2), (${selectorISPcount}*4)",
-        "queryValue": "",
-        "skipUrlSync": false,
-        "type": "custom"
-      },
-      {
         "description": "Shim",
         "hide": 2,
         "name": "binSize",
         "query": "50",
         "skipUrlSync": false,
         "type": "constant"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "MeanThroughputMbps",
+          "value": "MeanThroughputMbps"
+        },
+        "description": "Select metric displayed in the table.",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Table Field",
+        "multi": false,
+        "name": "table_field",
+        "options": [
+          {
+            "selected": false,
+            "text": "MinRTT",
+            "value": "MinRTT"
+          },
+          {
+            "selected": true,
+            "text": "MeanThroughputMbps",
+            "value": "MeanThroughputMbps"
+          },
+          {
+            "selected": false,
+            "text": "uploadMeanThroughputMbps",
+            "value": "uploadMeanThroughputMbps"
+          },
+          {
+            "selected": false,
+            "text": "LossRate",
+            "value": "LossRate"
+          },
+          {
+            "selected": false,
+            "text": "linearMinRTT",
+            "value": "linearMinRTT"
+          },
+          {
+            "selected": false,
+            "text": "linearMSS",
+            "value": "linearMSS"
+          },
+          {
+            "selected": false,
+            "text": "RTO",
+            "value": "RTO"
+          },
+          {
+            "selected": false,
+            "text": "fineMeanThroughputMbps",
+            "value": "fineMeanThroughputMbps"
+          }
+        ],
+        "query": "MinRTT, MeanThroughputMbps, uploadMeanThroughputMbps, LossRate, linearMinRTT, linearMSS, RTO, fineMeanThroughputMbps",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
       },
       {
         "current": {
@@ -1467,12 +1352,61 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "none",
+          "value": "none"
+        },
+        "description": "Select the 4th data column.\nMost choices are not supported when using cached data",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Fourth column",
+        "multi": false,
+        "name": "field",
+        "options": [
+          {
+            "selected": true,
+            "text": "none",
+            "value": "none"
+          },
+          {
+            "selected": false,
+            "text": "MinRTT",
+            "value": "MinRTT"
+          },
+          {
+            "selected": false,
+            "text": "MeanThroughputMbps",
+            "value": "MeanThroughputMbps"
+          },
+          {
+            "selected": false,
+            "text": "uploadMeanThroughputMbps",
+            "value": "uploadMeanThroughputMbps"
+          },
+          {
+            "selected": false,
+            "text": "LossRate",
+            "value": "LossRate"
+          },
+          {
+            "selected": false,
+            "text": "RTO",
+            "value": "RTO"
+          }
+        ],
+        "query": "none, MinRTT, MeanThroughputMbps, uploadMeanThroughputMbps, LossRate, RTO",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },
   "time": {
-    "from": "2025-06-04T00:00:00.000Z",
-    "to": "2025-06-10T00:00:00.000Z"
+    "from": "now-24h",
+    "to": "now"
   },
   "timepicker": {
     "hidden": false
@@ -1480,6 +1414,6 @@
   "timezone": "utc",
   "title": "MLab Regional Details Dashboard",
   "uid": "dees4pr47gn40a",
-  "version": 65,
+  "version": 69,
   "weekStart": ""
 }
