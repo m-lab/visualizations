@@ -866,7 +866,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "Google BigQuery (mlab-collaboration)",
           "value": "P116E76923C5457A4"
         },
@@ -931,7 +931,7 @@
         },
         "datasource": {
           "type": "grafana-bigquery-datasource",
-          "uid": "${datasource}"
+          "uid": "P116E76923C5457A4"
         },
         "definition": "",
         "description": "Used to select Client ISPs to be evaluated in  region. ",
@@ -1414,6 +1414,6 @@
   "timezone": "utc",
   "title": "MLab Regional Details Dashboard",
   "uid": "dees4pr47gn40a",
-  "version": 69,
+  "version": 70,
   "weekStart": ""
 }
