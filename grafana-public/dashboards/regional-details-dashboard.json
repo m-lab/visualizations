@@ -56,7 +56,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "P116E76923C5457A4"
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -125,7 +125,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 1,
@@ -956,7 +956,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Google BigQuery (mlab-collaboration)",
           "value": "P116E76923C5457A4"
         },
@@ -1021,7 +1021,7 @@
         },
         "datasource": {
           "type": "grafana-bigquery-datasource",
-          "uid": "P116E76923C5457A4"
+          "uid": "${datasource}"
         },
         "definition": "",
         "description": "Used to select Client ISPs to be evaluated in  region. ",
@@ -1037,7 +1037,7 @@
           "location": "",
           "project": "measurement-lab",
           "rawQuery": true,
-          "rawSql": "# From: 2024-12-20 Prototype cached site picker  \n\nSELECT\n  CONCAT(metro, ' ', ContinentCode, ' ', City, ', ', CountryCode) AS text,\n  metro AS value,\nFROM (\n  SELECT\n    REGEXP_EXTRACT(site, '^([a-z]{3})') AS metro,\n    ANY_VALUE(ContinentCode) AS ContinentCode,\n    ANY_VALUE(City) AS City,\n    ANY_VALUE(CountryCode) AS CountryCode,\n  FROM `${dataset}.cached_metadata`\n  GROUP BY metro\n  ORDER BY  ContinentCode, CountryCode, metro\n)\n",
+          "rawSql": "# From: 2024-12-20 Prototype cached site picker  \n\nSELECT\n  FORMAT('%t %t %t, %t', metro, ContinentCode, City, CountryCode) AS text,\n  metro AS value,\nFROM (\n  SELECT\n    REGEXP_EXTRACT(site, '^([a-z]{3})') AS metro,\n    ANY_VALUE(ContinentCode) AS ContinentCode,\n    ANY_VALUE(City) AS City,\n    ANY_VALUE(CountryCode) AS CountryCode,\n  FROM `${dataset}.cached_metadata`\n  GROUP BY metro\n  ORDER BY  ContinentCode, CountryCode, metro\n)\n",
           "refId": "tempvar",
           "sql": {
             "columns": [
@@ -1065,7 +1065,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "500",
           "value": "500"
         },
@@ -1101,11 +1101,11 @@
         "current": {
           "selected": true,
           "text": [
-            "bom02 (0.0 IN) 4755 TATA Communications formerly VSNL is Leading ISP",
-            "bom04 (0.0 IN) 55836 Reliance Jio Infocomm Limited",
-            "bom06 (0.0 IN) 396982 Google LLC",
-            "bom149251 (0.0 IN) 149251 (missing)",
-            "isk140204 (158.0 IN) 140204 (missing)"
+            "bom02 (0.0 IN) 4755, TATA Communications formerly VSNL is Leading ISP",
+            "bom04 (0.0 IN) 55836, Reliance Jio Infocomm Limited",
+            "bom06 (0.0 IN) 396982, Google LLC",
+            "bom149251 (0.0 IN) 149251, (missing)",
+            "isk140204 (158.0 IN) 140204, (missing)"
           ],
           "value": [
             "bom02",
@@ -1117,7 +1117,7 @@
         },
         "datasource": {
           "type": "grafana-bigquery-datasource",
-          "uid": "P116E76923C5457A4"
+          "uid": "${datasource}"
         },
         "definition": "",
         "description": "Manually select  server sites within a specified radius of the anchor metro.",
@@ -1161,7 +1161,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "10",
           "value": "10"
         },
@@ -1507,6 +1507,6 @@
   "timezone": "utc",
   "title": "MLab Regional Details Dashboard",
   "uid": "dees4pr47gn40a",
-  "version": 75,
+  "version": 78,
   "weekStart": ""
 }
