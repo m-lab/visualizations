@@ -56,7 +56,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "P116E76923C5457A4"
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -158,7 +158,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 1,
@@ -192,7 +192,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "P116E76923C5457A4"
+        "uid": "${datasource}"
       },
       "description": "Show servers and ISPs causing outliers.",
       "fieldConfig": {
@@ -292,7 +292,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 1,
@@ -326,7 +326,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "P116E76923C5457A4"
+        "uid": "${datasource}"
       },
       "description": "These are aggregated across the entire prefetch  date range.",
       "fieldConfig": {
@@ -540,7 +540,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "P116E76923C5457A4"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 1,
@@ -605,7 +605,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "experimental",
           "value": "experimental"
         },
@@ -750,8 +750,8 @@
       {
         "current": {
           "selected": false,
-          "text": "500",
-          "value": "500"
+          "text": "1",
+          "value": "1"
         },
         "description": "Radius from the anchor metro for selecting servers",
         "hide": 0,
@@ -761,7 +761,7 @@
         "name": "radius",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "1",
             "value": "1"
           },
@@ -771,7 +771,7 @@
             "value": "100"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "500",
             "value": "500"
           }
@@ -782,11 +782,11 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
-            "den02 (0.0 US) 3356 Level 3 Parent, LLC",
-            "den04 (0.0 US) 6461 Zayo Bandwidth",
-            "den05 (0.0 US) 1299 Telia Company AB"
+            "den02 (0.0 US) 3356, Level 3 Parent, LLC",
+            "den04 (0.0 US) 6461, Zayo Bandwidth",
+            "den05 (0.0 US) 1299, Telia Company AB"
           ],
           "value": [
             "den02",
@@ -796,7 +796,7 @@
         },
         "datasource": {
           "type": "grafana-bigquery-datasource",
-          "uid": "P116E76923C5457A4"
+          "uid": "${datasource}"
         },
         "definition": "",
         "description": "Manually select  server sites within a specified radius of the anchor metro.",
@@ -894,7 +894,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "7922 Comcast Cable Communications, LLC",
             "13335 Cloudflare, Inc "
@@ -1041,8 +1041,8 @@
     ]
   },
   "time": {
-    "from": "now-10d",
-    "to": "now-3d"
+    "from": "2025-07-27T00:00:00.000Z",
+    "to": "2025-08-02T23:59:59.000Z"
   },
   "timepicker": {
     "hidden": false,
@@ -1056,6 +1056,6 @@
   "timezone": "utc",
   "title": "EXP Time Series",
   "uid": "becs8jrn7r75sc",
-  "version": 30,
+  "version": 32,
   "weekStart": ""
 }
