@@ -21,11 +21,11 @@
       }
     ]
   },
-  "description": "Full matrix of Client ISPs and MLab Server comparisons, circa an anchor metro.",
+  "description": "Selectable matrix of Client ISPs and MLab Server comparisons, circa an anchor metro.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 522,
+  "id": 544,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -47,7 +47,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "# Regional Details Dashboard\n### Warning: This is a pre-release of experimental software.\nIt is not running on production infrastructure and is subject to changes or deletion without notification.\nFor more information scroll down and see the [slides](https://docs.google.com/presentation/d/1wpx45K30QD2ZIDuS5WsuRGrbcCrxs56cvuhydWRIRiw/edit?usp=sharing).\n\nThe Anchor Metro is used to preselect servers (within the selected radus) and preselect client ISPs (by rank in the anchor metro).\n\nData is shown for all selected Severs cross all selected Client ISPs.\n\nNote that the client data is preselected by rank independently in each metro.\nIf a client ISP's rank differs between metros, some of its data might not be shown.\nTo workaround this, select extra client rows, beyond the last clinetISP that you want to see.\n\nMethod selects the backend: Please use cached.\n",
+        "content": "# Regional Details Dashboard\n### Warning: This is a pre-release of experimental software.\nIt is not running on production infrastructure and is subject to changes or deletion without notification.\nFor documentation see the [README](/d/ef30n862ylji8a/) or scroll down for basic information. \n\nThe Anchor Metro is used to preselect servers (within the selected radus)\nand preselect client ISPs (by rank in the anchor metro).\n\nData is shown for all selected Severs cross all selected Client ISPs.\n\nNote that the client data is preselected by rank independently in each metro.\nIf a client ISP's rank differs between metros, some of its data might not be shown.\nTo workaround this, select extra client rows,\nbeyond the last clinetISP that you want to select.\n\nIf shown method selects the backend: Please use cached.\n\n",
         "mode": "markdown"
       },
       "pluginVersion": "11.1.3",
@@ -132,7 +132,7 @@
           "location": "",
           "project": "mlab-collaboration",
           "rawQuery": true,
-          "rawSql": "SELECT \"{dataset}\" AS name, \"${dataset}\" AS value\nUNION ALL SELECT \"{anchor}\", \"${anchor}\"\nUNION ALL SELECT \"{region:regex}\", \"${region:regex}\"\nUNION ALL SELECT \"{ClientISP:regex}\", \"${ClientISP:regex}\"\n# SELECT \"{datasou rce}\" \"${datasou rce}\" AS VALUE",
+          "rawSql": "SELECT \"{dataset}\" AS name, \"${dataset}\" AS value\nUNION ALL SELECT \"{method}\", \"${method}\"\nUNION ALL SELECT \"{anchor}\", \"${anchor}\"\nUNION ALL SELECT \"{radius}\", \"${radius}\"\nUNION ALL SELECT \"{region:regex}\", \"${region:regex}\"\nUNION ALL SELECT \"{ISPcount}\", \"${ISPcount}\"\nUNION ALL SELECT \"{ClientISP:regex}\", \"${ClientISP:regex}\"\n-- Consider dates\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -417,6 +417,30 @@
                 "value": 196
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "KS_breadcrumb"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 181
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SP_Breadcrumb"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 177
+              }
+            ]
           }
         ]
       },
@@ -452,7 +476,7 @@
           "location": "",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "\nSELECT level, Metric, Sites, tests, pct, KSdistance, KSoutlier, Spread, SPoutlier, ISPname\nFROM (\n  SELECT * EXCEPT (ISPname),\n  data AS metric,\n  percent AS pct,\n  IF (level like \"Regional Summary\",\n    FORMAT (\"%t summary\", REGEXP_REPLACE(ISPname, '^0 ', \"\")),\n    ISPname\n    ) AS ISPname,\n  -- FROM `${dataset}.cached_metro_report`(\"MinRTT\", \"${site:regex}\", ${ISPcount})\n  FROM `${dataset}.regional_report` (\"${method}\",\"${xAxis}\", ${binSize}, \"${table_field}\",\n    DATE(REGEXP_EXTRACT(\"${__from:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    DATE(REGEXP_EXTRACT(\"${__to:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    \"^(${region:regex})\", \"^(${ClientISP:regex})\", ${ISPcount})\n  WHERE ${verbose} OR level like \"Regional Summary\" OR level LIKE \"ISP%%\"  \n)",
+          "rawSql": "\nSELECT level, Metric, Sites, tests, pct, KSdistance,\n  KSoutlier AS KS_breadcrumb, Spread, SPoutlier AS SP_Breadcrumb, ISPname\nFROM (\n  SELECT * EXCEPT (ISPname),\n  data AS metric,\n  percent AS pct,\n  IF (level like \"Regional Summary\",\n    FORMAT (\"%t summary\", REGEXP_REPLACE(ISPname, '^0 ', \"\")),\n    ISPname\n    ) AS ISPname,\n  -- FROM `${dataset}.cached_metro_report`(\"MinRTT\", \"${site:regex}\", ${ISPcount})\n  FROM `${dataset}.regional_report` (\"${method}\",\"${xAxis}\", ${binSize}, \"${table_field}\",\n    DATE(REGEXP_EXTRACT(\"${__from:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    DATE(REGEXP_EXTRACT(\"${__to:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    \"^(${region:regex})\", \"^(${ClientISP:regex})\", ${ISPcount})\n  WHERE ${verbose} OR level like \"Regional Summary\" OR level LIKE \"ISP%%\"  \n)",
           "refId": "A",
           "sql": {
             "columns": [
@@ -507,7 +531,7 @@
       "maxDataPoints": 80000,
       "options": {
         "config": {
-          "displayModeBar": false
+          "displayModeBar": true
         },
         "data": [],
         "layout": {
@@ -538,8 +562,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.05555555555555555,
-              1.0555555555555556
+              -0.026115306133018455,
+              0.4961908165273505
             ],
             "type": "linear"
           }
@@ -562,7 +586,7 @@
           "orderBySort": "1",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    linBin,\n    SUM(hist) AS hist,\n    siteName,\n  -- FROM `${dataset}.access_ndt7_cached_histograms`(\"linearMinRTT\", \"${region:regex}\", ${rank})\n  FROM `${dataset}.access_ndt7_isp_histograms` (\"${method}\", \"${xAxis}\", ${binSize}, \"linearMinRTT\",\n    DATE(REGEXP_EXTRACT(\"${__from:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    DATE(REGEXP_EXTRACT(\"${__to:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    \"${region:regex}\", ${ISPcount})\n\n  WHERE  REGEXP_CONTAINS ( ISPname, \"^(${ClientISP:regex})\" )\n  GROUP BY siteName, linBin\n)\n\nSELECT linBin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n      ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY linBin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n    END AS data,\n    siteName,\n  FROM ISPdata\n  ORDER BY linBin",
+          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    bin,\n    binIX,\n    CAST(ROUND(binIX / 50.0 * ${binSize}) AS INT) AS thinedIX,\n    SUM(hist) AS hist,\n    siteName,\n  FROM `${dataset}.access_ndt7_isp_histograms` (\"${method}\", \"${xAxis}\", ${binSize}, \"MinRTT\",\n    DATE(REGEXP_EXTRACT(\"${__from:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    DATE(REGEXP_EXTRACT(\"${__to:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    \"${region:regex}\", ${ISPcount})\n  WHERE  REGEXP_CONTAINS ( ISPname, \"^(${ClientISP:regex})\" )\n  GROUP BY siteName, thinedIX, binIX, bin\n  HAVING (binIX = thinedIX * 50 / ${binSize}) OR (\"$mode\" = \"cdf\")\n)\n\nSELECT bin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n      ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n    END AS data,\n    siteName,\n  FROM ISPdata\n  ORDER BY bin",
           "refId": "A",
           "select": [
             [
@@ -621,7 +645,7 @@
       "maxDataPoints": 80000,
       "options": {
         "config": {
-          "displayModeBar": false
+          "displayModeBar": true
         },
         "data": [],
         "layout": {
@@ -652,8 +676,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.05555555555555555,
-              1.0555555555555556
+              -0.026115306133018455,
+              0.4961908165273505
             ],
             "type": "linear"
           }
@@ -676,7 +700,7 @@
           "orderBySort": "1",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    bin,\n    SUM(hist) AS hist,\n    siteName,\n  -- FROM `${dataset}.access_ndt7_cached_histograms`(\"MinRTT\", \"${region:regex}\", ${rank})\n  FROM `${dataset}.access_ndt7_isp_histograms` (\"${method}\", \"${xAxis}\", ${binSize}, \"MinRTT\",\n    DATE(REGEXP_EXTRACT(\"${__from:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    DATE(REGEXP_EXTRACT(\"${__to:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n\"${region:regex}\", ${ISPcount})\n\n  WHERE  REGEXP_CONTAINS ( ISPname, \"^(${ClientISP:regex})\" )\n  GROUP BY siteName, bin\n)\n\nSELECT bin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n      ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n    END AS data,\n    siteName,\n  FROM ISPdata\n  ORDER BY bin",
+          "rawSql": "WITH\n\nISPdata AS (\n  SELECT\n    bin,\n    binIX,\n    CAST(ROUND(binIX / 50.0 * ${binSize}) AS INT) AS thinedIX,\n    SUM(hist) AS hist,\n    siteName,\n  FROM `${dataset}.access_ndt7_isp_histograms` (\"${method}\", \"${xAxis}\", ${binSize}, \"MinRTT\",\n    DATE(REGEXP_EXTRACT(\"${__from:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    DATE(REGEXP_EXTRACT(\"${__to:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    \"${region:regex}\", ${ISPcount})\n  WHERE  REGEXP_CONTAINS ( ISPname, \"^(${ClientISP:regex})\" )\n  GROUP BY siteName, thinedIX, binIX, bin\n  HAVING (binIX = thinedIX * 50 / ${binSize}) OR (\"$mode\" = \"cdf\")\n)\n\nSELECT bin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n      ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n    END AS data,\n    siteName,\n  FROM ISPdata\n  ORDER BY bin",
           "refId": "A",
           "select": [
             [
@@ -735,7 +759,7 @@
       "maxDataPoints": 80000,
       "options": {
         "config": {
-          "displayModeBar": false
+          "displayModeBar": true
         },
         "data": [],
         "layout": {
@@ -766,8 +790,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.05555555555555555,
-              1.0555555555555556
+              -0.0023341868970811943,
+              0.044349551044542676
             ],
             "type": "linear"
           }
@@ -790,7 +814,7 @@
           "orderBySort": "1",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "\nWITH\n\nISPdata AS (\n  SELECT\n    bin,\n    SUM(hist) AS hist,\n    siteName,\n  -- FROM `${dataset}.access_ndt7_cached_histograms`(\"MeanThroughputMbps\", \"${region:regex}\", ${rank})\n  FROM `${dataset}.access_ndt7_isp_histograms` (\"${method}\", \"${xAxis}\", ${binSize}, \"MeanThroughputMbps\",\n    DATE(REGEXP_EXTRACT(\"${__from:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    DATE(REGEXP_EXTRACT(\"${__to:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    \"${region:regex}\", ${ISPcount})\n\n  WHERE  REGEXP_CONTAINS ( ISPname, \"^(${ClientISP:regex})\" )\n  GROUP BY siteName, bin\n)\n\nSELECT bin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n      ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n    END AS data,\n    siteName,\n  FROM ISPdata\n  ORDER BY bin",
+          "rawSql": "\nWITH\n\nISPdata AS (\n  SELECT\n    bin,\n    binIX,\n    CAST(ROUND(binIX / 50.0 * ${binSize}) AS INT) AS thinedIX,\n    SUM(hist) AS hist,\n    siteName,\n  FROM `${dataset}.access_ndt7_isp_histograms` (\"${method}\", \"${xAxis}\", ${binSize}, \"MeanThroughputMbps\",\n    DATE(REGEXP_EXTRACT(\"${__from:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    DATE(REGEXP_EXTRACT(\"${__to:date:iso}\", '[0-9]{4}-[0-9]{2}-[0-9]{2}')),\n    \"${region:regex}\", ${ISPcount})\n  WHERE  REGEXP_CONTAINS ( ISPname, \"^(${ClientISP:regex})\" )\n  GROUP BY siteName, thinedIX, binIX, bin\n  HAVING (binIX = thinedIX * 50 / ${binSize}) OR (\"$mode\" = \"cdf\")\n)\n\nSELECT bin,\n    CASE \"$mode\"\n      WHEN \"pdf\" THEN hist / SUM(hist) OVER (partition by siteName)\n      WHEN \"peak\" THEN hist / MAX(hist) OVER (partition by siteName)\n      ELSE SUM(hist) OVER (PARTITION BY siteName ORDER BY bin ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) / SUM(hist) OVER (partition by siteName)\n    END AS data,\n    siteName,\n  FROM ISPdata\n  ORDER BY bin",
           "refId": "A",
           "select": [
             [
@@ -960,7 +984,8 @@
           "text": "Google BigQuery (mlab-collaboration)",
           "value": "P116E76923C5457A4"
         },
-        "hide": 1,
+        "description": "Backend credentials",
+        "hide": 2,
         "includeAll": false,
         "multi": false,
         "name": "datasource",
@@ -973,6 +998,7 @@
         "type": "datasource"
       },
       {
+        "description": "Path to BQ resources not inherited from credentials",
         "hide": 2,
         "name": "dataset",
         "query": "mlab-collaboration.mm_preproduction",
@@ -986,7 +1012,7 @@
           "value": "cached"
         },
         "description": "Select processing stack version",
-        "hide": 0,
+        "hide": 2,
         "includeAll": false,
         "multi": false,
         "name": "method",
@@ -1016,15 +1042,15 @@
         "allValue": ".*",
         "current": {
           "selected": false,
-          "text": "bom AS Mumbai, IN",
-          "value": "bom"
+          "text": "gru SA Campinas, BR",
+          "value": "gru"
         },
         "datasource": {
           "type": "grafana-bigquery-datasource",
           "uid": "${datasource}"
         },
         "definition": "",
-        "description": "Used to select Client ISPs to be evaluated in  region. ",
+        "description": "Used to select M-Lab servers and Client ISPs to be evaluated in the  region. ",
         "hide": 0,
         "includeAll": false,
         "label": "Anchor metro",
@@ -1066,8 +1092,8 @@
       {
         "current": {
           "selected": false,
-          "text": "500",
-          "value": "500"
+          "text": "100",
+          "value": "100"
         },
         "description": "Radius from the anchor metro for selecting servers",
         "hide": 0,
@@ -1082,12 +1108,12 @@
             "value": "1"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "100",
             "value": "100"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "500",
             "value": "500"
           }
@@ -1101,18 +1127,14 @@
         "current": {
           "selected": true,
           "text": [
-            "bom02 (0.0 IN) 4755, TATA Communications formerly VSNL is Leading ISP",
-            "bom04 (0.0 IN) 55836, Reliance Jio Infocomm Limited",
-            "bom06 (0.0 IN) 396982, Google LLC",
-            "bom149251 (0.0 IN) 149251, (missing)",
-            "isk140204 (158.0 IN) 140204, (missing)"
+            "gru02 (0.0 BR) 262589, INTERNEXA BRASIL OPERADORA DE TELECOMUNICACOES S A",
+            "gru03 (0.0 BR) 6762, TELECOM ITALIA SPARKLE S p A ",
+            "gru06 (0.0 BR) 396982, Google LLC"
           ],
           "value": [
-            "bom02",
-            "bom04",
-            "bom06",
-            "bom149251",
-            "isk140204"
+            "gru02",
+            "gru03",
+            "gru06"
           ]
         },
         "datasource": {
@@ -1120,7 +1142,7 @@
           "uid": "${datasource}"
         },
         "definition": "",
-        "description": "Manually select  server sites within a specified radius of the anchor metro.",
+        "description": "Select M-Lab sites within the specified radius of the anchor metro.",
         "hide": 0,
         "includeAll": false,
         "label": "Servers",
@@ -1165,7 +1187,7 @@
           "text": "10",
           "value": "10"
         },
-        "description": "Number of ISPs to include",
+        "description": "Number of Client ISPs to preprocess.   It is best to include extras, beyond the Client ISP selectors.",
         "hide": 0,
         "includeAll": false,
         "label": "Client Rows",
@@ -1228,18 +1250,20 @@
         "current": {
           "selected": true,
           "text": [
-            "55836 Reliance Jio Infocomm Limited",
-            "45609 Bharti Airtel Ltd  AS for GPRS Service",
-            "24560 Bharti Airtel Ltd , Telemedia Services",
-            "38266 Vodafone India Ltd ",
-            "134674 TATA SKY BROADBAND PRIVATE LIMITED"
+            "18881 TELEFÔNICA BRASIL S A",
+            "28573 CLARO S A ",
+            "26599 TELEFÔNICA BRASIL S A",
+            "27699 TELEFÔNICA BRASIL S A",
+            "14593 Space Exploration Technologies Corporation",
+            "26615 Tim Celular S A "
           ],
           "value": [
-            "55836 Reliance Jio Infocomm Limited",
-            "45609 Bharti Airtel Ltd  AS for GPRS Service",
-            "24560 Bharti Airtel Ltd , Telemedia Services",
-            "38266 Vodafone India Ltd ",
-            "134674 TATA SKY BROADBAND PRIVATE LIMITED"
+            "18881 TELEFÔNICA BRASIL S A",
+            "28573 CLARO S A ",
+            "26599 TELEFÔNICA BRASIL S A",
+            "27699 TELEFÔNICA BRASIL S A",
+            "14593 Space Exploration Technologies Corporation",
+            "26615 Tim Celular S A "
           ]
         },
         "datasource": {
@@ -1247,7 +1271,7 @@
           "uid": "${datasource}"
         },
         "definition": "",
-        "description": "Choose high volume Client ISPs. ",
+        "description": "Select Client ISPs of interest.   ",
         "hide": 0,
         "includeAll": false,
         "label": "Client ISPs",
@@ -1289,16 +1313,17 @@
       {
         "current": {
           "selected": false,
-          "text": "cdf",
-          "value": "cdf"
+          "text": "pdf",
+          "value": "pdf"
         },
+        "description": "Select graph type.",
         "hide": 0,
         "includeAll": false,
         "multi": false,
         "name": "mode",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "pdf",
             "value": "pdf"
           },
@@ -1308,12 +1333,60 @@
             "value": "peak"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "cdf",
             "value": "cdf"
           }
         ],
         "query": "pdf,peak,cdf",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "50",
+          "value": "50"
+        },
+        "description": "Re-scale the pdf X axes to the specified number of bins per decade, to smooth Y axis noise.   The raw data is 50 bins per decade.",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "binSize",
+        "options": [
+          {
+            "selected": true,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "25",
+            "value": "25"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          }
+        ],
+        "query": "50, 25, 10, 5, 2, 1",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
@@ -1350,14 +1423,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "description": "Shim",
-        "hide": 2,
-        "name": "binSize",
-        "query": "50",
-        "skipUrlSync": false,
-        "type": "constant"
       },
       {
         "current": {
@@ -1424,7 +1489,7 @@
           "text": "false",
           "value": "false"
         },
-        "description": "Show more detail in the result table",
+        "description": "Show more detail in the result table.",
         "hide": 0,
         "includeAll": false,
         "multi": false,
@@ -1502,11 +1567,11 @@
     "to": "now"
   },
   "timepicker": {
-    "hidden": false
+    "hidden": true
   },
   "timezone": "utc",
-  "title": "MLab Regional Details Dashboard",
-  "uid": "dees4pr47gn40a",
-  "version": 78,
+  "title": "Public Regional Details Dashboard",
+  "uid": "20251103a",
+  "version": 4,
   "weekStart": ""
 }
