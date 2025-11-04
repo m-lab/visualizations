@@ -1,0 +1,76 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Short synopsis of each of the differential measurement dashboards.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 543,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "xIXR1_LMz"
+      },
+      "gridPos": {
+        "h": 19,
+        "w": 18,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "# README - Introduction to M-Lab differential measurements\nMatt Mathis, 2025-11-03\n\nThese dashboards are intended for public use: Please share.\n- See the [short slide deck](https://docs.google.com/presentation/d/1NtlXFFAkwF5HqHWcDcrbh3TrGUdpdHKa1AWJ404kLQ4/edit?usp=sharing)\nfor a quick introduction.\n\n- See the [full slide deck](https://docs.google.com/presentation/d/1wpx45K30QD2ZIDuS5WsuRGrbcCrxs56cvuhydWRIRiw/edit?usp=sharing)\nfor a detailed description of the methodology.\n\n- See the [case for deploying servers](https://docs.google.com/presentation/d/1LBmas8kQtiT9Gv48fBjH3Eqbj4DXIVMGdACnTqr9K78/edit?usp=sharing)\nto understand how ISPs can use M-Lab instrumentation to help them\nimprove their service to their customers, and thereby build a better Internet.\n\n## Global Metro Barchart [link](${detailURL}20250110a)\nDisplay Global interconnect quality (pain) metrics.\nEvaluate the interconnections between ISPs by measuring differences in performance to M-Lab servers\nfrom each of the N largest Client ISPs in the metro.\nIf the score is high (poor) it means that users attached to a some ISPs get different performances\nto the different M-Lab servers, indicating non-uniform connectivity between the ISPs.\nIn all cases high scores suggest peering problems,\nand low scores are probably good as long as M-Lab has sufficient coverage.\n\n## Metro Details Dashboard [link](${detailURL}20250114a)\nShow the detailed performance statistics between the top N client ISPs\nand all MLab sites in the selected metro.\nThis dashboard is slated to be replaced\nby the Regional Details Dashboad, below.\n\n## Regional Details Dashboard [link](${detailURL}20251103a)\nShow detailed performance statistics of the cross product of\nselected client ISPs and selected M-Lab site in the vicinity\nof a selected anchor metro.\nThis dashboard is feature rich, and expected to continue to evolve.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "11.1.3",
+      "type": "text"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "description": "Base path name within a relative URL",
+        "hide": 2,
+        "name": "detailURL",
+        "query": "/d/",
+        "skipUrlSync": false,
+        "type": "constant"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": true
+  },
+  "timezone": "utc",
+  "title": "0 README - Introduction to differential measurements",
+  "uid": "ef30n862ylji8a",
+  "version": 11,
+  "weekStart": ""
+}
