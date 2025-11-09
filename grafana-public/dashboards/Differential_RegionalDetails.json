@@ -36,7 +36,7 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 12,
+        "w": 15,
         "x": 0,
         "y": 0
       },
@@ -47,7 +47,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "# Regional Details Dashboard\n### Warning: This is a pre-release of experimental software.\nIt is not running on production infrastructure and is subject to changes or deletion without notification.\nFor documentation see the [README](/d/ef30n862ylji8a/) or scroll down for basic information. \n\nThe Anchor Metro is used to preselect servers (within the selected radus)\nand preselect client ISPs (by rank in the anchor metro).\n\nData is shown for all selected Severs cross all selected Client ISPs.\n\nNote that the client data is preselected by rank independently in each metro.\nIf a client ISP's rank differs between metros, some of its data might not be shown.\nTo workaround this, select extra client rows,\nbeyond the last clinetISP that you want to select.\n\nIf shown method selects the backend: Please use cached.\n\n",
+        "content": "# Regional Details Dashboard\n### Warning: This is a pre-release of experimental software.\nIt is not running on production infrastructure and is subject to changes or deletion without notification.\nFor documentation see the [README](/d/20251106a/) or scroll down for basic information. \n\nThe Anchor Metro is used to preselect servers (within the selected radus)\nand preselect client ISPs (by rank in the anchor metro).\n\nData is shown for all selected Severs cross all selected Client ISPs.\n\nNote that the client data is preselected by rank independently in each metro.\nIf a client ISP's rank differs between metros, some of its data might not be shown.\nTo workaround this, select extra client rows,\nbeyond the last clinetISP that you want to select.\n\n",
         "mode": "markdown"
       },
       "pluginVersion": "11.1.3",
@@ -103,7 +103,7 @@
       "gridPos": {
         "h": 1,
         "w": 1,
-        "x": 12,
+        "x": 15,
         "y": 0
       },
       "id": 154,
@@ -1572,6 +1572,6 @@
   "timezone": "utc",
   "title": "Public Regional Details Dashboard",
   "uid": "20251103a",
-  "version": 4,
+  "version": 6,
   "weekStart": ""
 }
