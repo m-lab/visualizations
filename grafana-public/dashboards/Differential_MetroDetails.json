@@ -47,7 +47,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "# Metro Details Dashboard \n\n### Warning: This is a pre-release of research software.\nIt is not running on production infrastructure and is subject to change or deletion without notification.\n\nFor more information scroll down or see the [slides](https://docs.google.com/presentation/d/1wpx45K30QD2ZIDuS5WsuRGrbcCrxs56cvuhydWRIRiw/edit?usp=sharing).\n\nShow the detailed performance statistics between the top N client ISPs and all MLab sites in the selected metro.\nThe first three rows are aggregates: metro wide, by server, or by Client ISP.\n\nThe rest of the dashboard shows the performance statics individually between each of the top N Client ISPs and all MLab servers.\n\nUnder ideal conditions each Client ISP will have identical performance to each MLab site.\n\nThis data is precomputed for the date ranges shown at the top of the ISP summary table.\n\n",
+        "content": "# Metro Details Dashboard \n\n### Warning: This is a pre-release of research software.\nIt is not running on production infrastructure and is subject to changes or deletion without notification.\nFor documentation see the [README](/d/20251106a/) or scroll down for basic information. \n\nThis dashboard is obsolete and is slated to be replaced by\nthe [Regional Details Dashboard](/d/20251103a) in a future release.\n\nShow the detailed performance statistics between the top N client ISPs and all MLab sites in the selected metro.\nThe first three rows are aggregates: metro wide, by server, or by Client ISP.\n\nThe rest of the dashboard shows the performance statics individually between each of the top N Client ISPs and all MLab servers.\n\nUnder ideal conditions each Client ISP will have identical performance to each MLab site.\n\nThis data is precomputed for the date ranges shown at the top of the ISP summary table.\n\n",
         "mode": "markdown"
       },
       "pluginVersion": "11.1.3",
@@ -299,8 +299,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0017403859668322157,
-              0.0330673333698121
+              -0.0039550861885633976,
+              0.07514663758270455
             ],
             "type": "linear"
           }
@@ -388,8 +388,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0016565652664183963,
-              0.03147474006194953
+              -0.0015219181158154737,
+              0.028916444200494
             ],
             "type": "linear"
           }
@@ -479,8 +479,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.004170842421741438,
-              0.07924600601308732
+              -0.006976609959164827,
+              0.13255558922413171
             ],
             "type": "linear"
           }
@@ -593,8 +593,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.003892118951050179,
-              0.07395026006995341
+              -0.006092275156131325,
+              0.11575322796649518
             ],
             "type": "linear"
           }
@@ -707,8 +707,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0020762162798916243,
-              0.03944810931794086
+              -0.001982925211271668,
+              0.03767557901416169
             ],
             "type": "linear"
           }
@@ -821,8 +821,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0041055645079002044,
-              0.07800572565010386
+              -0.006599498835050872,
+              0.12539047786596658
             ],
             "type": "linear"
           }
@@ -935,8 +935,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.010046703595090694,
-              0.19088736830672315
+              -0.013597060599229391,
+              0.25834415138535843
             ],
             "type": "linear"
           }
@@ -1049,8 +1049,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.002008464807632342,
-              0.03816083134501449
+              -0.0025004599291579537,
+              0.047508738654001126
             ],
             "type": "linear"
           }
@@ -1178,8 +1178,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.003578265030888367,
-              0.06798703558687898
+              -0.011923057220429282,
+              0.22653808718815632
             ],
             "type": "linear"
           }
@@ -1292,8 +1292,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.022880996405958583,
-              0.4347389317132131
+              -0.026115306133018445,
+              0.4961908165273505
             ],
             "type": "linear"
           }
@@ -1406,8 +1406,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.003742125527299506,
-              0.07110038501869062
+              -0.003946569520340012,
+              0.07498482088646023
             ],
             "type": "linear"
           }
@@ -1484,7 +1484,7 @@
           "text": "Google BigQuery (mlab-collaboration)",
           "value": "P116E76923C5457A4"
         },
-        "hide": 1,
+        "hide": 2,
         "includeAll": false,
         "multi": false,
         "name": "datasource",
@@ -1507,7 +1507,7 @@
         "allValue": ".*",
         "current": {
           "selected": false,
-          "text": "gru SA Sao Paulo, BR",
+          "text": "gru SA Campinas, BR",
           "value": "gru"
         },
         "datasource": {
@@ -1557,8 +1557,8 @@
       {
         "current": {
           "selected": false,
-          "text": "2",
-          "value": "2"
+          "text": "5",
+          "value": "5"
         },
         "description": "Number of ISPs to include - TODO rename the variable",
         "hide": 0,
@@ -1573,12 +1573,12 @@
             "value": "1"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "2",
             "value": "2"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "5",
             "value": "5"
           },
@@ -1702,6 +1702,6 @@
   "timezone": "utc",
   "title": "Metro Details Dashboard",
   "uid": "20250114a",
-  "version": 33,
+  "version": 36,
   "weekStart": ""
 }
